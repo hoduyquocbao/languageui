@@ -31,7 +31,7 @@ Trước khi bắt đầu, bạn phải:
 
 Thực hiện các nhiệm vụ dưới đây theo đúng thứ tự.
 
-#### **Nhiệm vụ 1: Thiết lập Nguồn Chân lý - `theme.ts` (TODO-001, TODO-006)**
+#### **Nhiệm vụ 1: Thiết lập Nguồn Chân lý - `theme.ts` (TODO-002, TODO-006)**
 
 * **Hành động:** Tạo file `src/core/theme.ts`.
 * **Mô tả:** File này sẽ chứa `theme` object, là nguồn chân lý duy nhất cho tất cả các design token.
