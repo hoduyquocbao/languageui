@@ -1,3 +1,10 @@
+/**
+ * @fileoverview
+ * This file defines the single source of truth for all design tokens.
+ * It follows the "single-word" naming convention for all token categories.
+ */
+
+// Colors are grouped by semantic meaning (primary, neutral) and type (gradient, border).
 const color = {
     primary: {
         100: "#2388FF",
@@ -15,6 +22,7 @@ const color = {
     }
 };
 
+// Typography tokens define font families, sizes, and weights.
 const typography = {
     font: {
         primary: "'Inter', sans-serif",
@@ -30,17 +38,20 @@ const typography = {
     }
 };
 
+// Shadow tokens provide consistent elevation styles.
 const shadow = {
     small: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
     medium: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
 };
 
+// Radius tokens are used for border-radius properties.
 const radius = {
     small: "4px",
     medium: "8px",
     large: "16px",
 };
 
+// Space tokens are used for margins, paddings, and gaps.
 const space = {
     1: "4px",
     2: "8px",
@@ -50,6 +61,10 @@ const space = {
     6: "24px",
 };
 
+/**
+ * The main theme object, aggregating all design token categories.
+ * This object is consumed by the styled-components ThemeProvider.
+ */
 export const theme = {
     color,
     typography,

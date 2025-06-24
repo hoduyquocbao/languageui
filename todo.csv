@@ -4,3 +4,8 @@ ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
 3,UI,Atom,"Build a centralized `Icon` component to dynamically render SVGs from a dedicated asset folder.",High,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-005"
 4,UI,Atom,"Implement a dynamic and reusable `Button` component based on variants, sizes, and theme tokens.",High,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-002"
 5,Project,Maintenance,"Clean up boilerplate code and files from the initial project setup.",Medium,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-004, TODO-007"
+6,Architecture,Adapter,"Create the directory structure for the new Adapter layer.",High,Done,Coder,2025-06-28,"Ref: TODO-008"
+7,Architecture,Adapter,"Implement the adapter for the `react` library.",High,Done,Coder,2025-06-28,"Ref: TODO-009"
+8,Architecture,Adapter,"Implement the adapter for `styled-components`.",High,Done,Coder,2025-06-28,"Ref: TODO-010"
+9,Architecture,Adapter,"Implement the adapter for `react-dom/client`.",High,Done,Coder,2025-06-28,"Ref: TODO-011"
+10,Architecture,Refactor,"Refactor the entire codebase to use the new Adapter layer instead of direct library imports.",High,Done,Coder,2025-06-28,"Ref: TODO-012"

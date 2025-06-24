@@ -1,18 +1,32 @@
-import React, { lazy, Suspense } from 'react';
+import { lazy, Suspense } from '@/adapter';
+import type { FC, SVG } from '@/adapter';
 
+/**
+ * Dynamically loads and renders SVG icons.
+ * The `icons` object maps a single-word `Kind` to a dynamically imported SVG.
+ * This uses React.lazy to ensure icons are only loaded when needed.
+ */
 const icons = {
-    search: lazy(() => import('../../assets/icons/search.svg?react')),
-    arrow: lazy(() => import('../../assets/icons/arrow.svg?react')),
+    search: lazy(() => import('@/assets/icons/search.svg?react')),
+    arrow: lazy(() => import('@/assets/icons/arrow.svg?react')),
 };
 
-export type Kind = keyof typeof icons;
-
-interface Props extends React.SVGProps<SVGSVGElement> {
-    name: Kind;
+/**
+ * The props for the Icon component.
+ * It extends standard SVG props.
+ * 'name' is the single-word identifier for the icon to display.
+ */
+interface Props extends SVG<SVGSVGElement> {
+    name: keyof typeof icons;
     size?: number;
 }
 
-export const Icon: React.FC<Props> = ({ name, size = 24, ...props }) => {
+/**
+ * A component to render an SVG icon.
+ * It looks up the icon component by its `name` and renders it,
+ * wrapped in a `Suspense` component to handle the dynamic loading.
+ */
+export const Icon: FC<Props> = ({ name, size = 24, ...props }) => {
     const Element = icons[name];
 
     if (!Element) {
