@@ -8,7 +8,8 @@ import { dom, style } from '@/adapter';
 import { theme } from '@/core/theme';
 import { Card } from '@/ui/atom/card';
 import { Title, Subtitle, Text } from '@/ui/atom/typography';
-import type { FC } from '@/adapter';
+import { Swatch } from '@/ui/atom/swatch';
+import type { FC, Node } from '@/adapter';
 
 /**
  * @name Global
@@ -44,11 +45,28 @@ const Showcase = style('div')`
  * @param {React.ReactNode} props.children - The content of the section.
  * @returns {JSX.Element} The rendered section.
  */
-const Section: FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+const Section: FC<{ title: string; children: Node }> = ({ title, children }) => (
     <section>
         <Subtitle>{title}</Subtitle>
         <Showcase>{children}</Showcase>
     </section>
+);
+
+/**
+ * @name Palette
+ * @description A specialized section for displaying a color palette.
+ * It iterates over a map of colors and renders a Swatch for each one.
+ * @param {object} props - The component props.
+ * @param {string} props.title - The title for the palette section.
+ * @param {Record<string, string>} props.colors - A map of color names to hex/rgba values.
+ * @returns {JSX.Element} The rendered palette section.
+ */
+const Palette: FC<{ title: string; colors: Record<string, string> }> = ({ title, colors }) => (
+    <Section title={title}>
+        {Object.entries(colors).map(([name, value]) => (
+            <Swatch key={name} name={name} color={value} />
+        ))}
+    </Section>
 );
 
 /**
@@ -61,6 +79,13 @@ const Section: FC<{ title: string; children: React.ReactNode }> = ({ title, chil
 const App: FC = () => (
     <main>
         <Title>LanguageUI Showcase</Title>
+
+        <Palette title="Primary Colors" colors={theme.color.primary} />
+        <Palette title="Secondary Colors" colors={theme.color.secondary} />
+        <Palette title="Neutral Colors" colors={theme.color.neutral} />
+        <Palette title="Overlay (Light)" colors={theme.color.overlay.light} />
+        <Palette title="Overlay (Dark)" colors={theme.color.overlay.dark} />
+        <Palette title="Gradients" colors={theme.color.gradient} />
 
         <Section title="Primary Shadows">
             <Card variant="primary" shadow="xs"><Text>XS</Text></Card>

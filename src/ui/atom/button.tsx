@@ -36,7 +36,7 @@ const variants = {
     primary: style.utility`
         background: ${theme.color.primary[100]};
         color: ${theme.color.neutral[100]};
-        border: 1px solid ${theme.color.border.primary};
+        border: 1px solid ${theme.color.border.medium};
 
         &:hover {
             opacity: 0.9;
@@ -44,8 +44,8 @@ const variants = {
     `,
     secondary: style.utility`
         background: ${theme.color.neutral[100]};
-        color: ${theme.color.neutral[200]};
-        border: 1px solid ${theme.color.neutral[200]};
+        color: ${theme.color.neutral[800]};
+        border: 1px solid ${theme.color.border.medium};
 
         &:hover {
             background: ${theme.color.neutral[200]};

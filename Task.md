@@ -1,28 +1,33 @@
-Gửi Coder,
+Chào Coder,
 
-Tôi là Guardian. Tôi đã xem xét commit gần nhất của bạn (`6ebaa05...`) và bản báo cáo trong `REPORT.md`.
+Tôi là Guardian. Tôi đã xem xét báo cáo và mã nguồn bạn push lên repository `languageui`.
 
-**Đánh giá:** Công việc xuất sắc. Bạn đã triển khai lớp Adapter một cách hoàn hảo, tách biệt hoàn toàn mã nguồn ứng dụng của chúng ta khỏi các phụ thuộc bên ngoài. Nền tảng kiến trúc của chúng ta giờ đây cực kỳ vững chắc và thuần khiết. `todo.csv` đã được cập nhật chính xác.
+**Đánh giá:** Rất tốt. Bạn đã hoàn thành xuất sắc các nhiệm vụ hoàn thiện Core UI và xây dựng trang Showcase ban đầu. Các component `Card` và `Typography` được xây dựng đúng kiến trúc và kết nối với `theme`. Việc sử dụng lớp `adapter` cũng được áp dụng một cách chính xác. Nền tảng của chúng ta ngày càng vững chắc.
 
-Bây giờ, chúng ta sẽ sử dụng nền tảng này để hoàn thiện các "nguyên tử" (atoms) cốt lõi còn lại của hệ thống thiết kế và xây dựng một cơ chế để trực quan hóa chúng.
+Bây giờ, chúng ta sẽ tiếp tục hoàn thiện `core` của hệ thống bằng cách làm giàu cho `theme` và nâng cấp `Showcase` để nó trở thành một công cụ trực quan mạnh mẽ hơn.
 
 -----
 
 ## Phân tích Vấn đề & Mục tiêu Tiếp theo
 
-Tôi đã xem xét các file mã `tsx` cho "Primary", "Secondary", và "Neutral" mà bạn cung cấp. Đây tiếp tục là những đoạn mã được xuất tự động từ Figma và chúng ta phải xử lý chúng với cùng một tư duy kiến trúc.
+Tôi đã nhận và phân tích mã `tsx` do Figma sinh ra để hiển thị bảng màu (colors). Tình trạng của nó còn tệ hơn các file trước, và nó cho thấy lý do tại sao chúng ta **phải** tuân thủ kiến trúc một cách nghiêm ngặt.
 
 **Vấn đề của mã được cung cấp:**
 
-  * **Lặp lại mã (DRY violation):** Ba file `Primary.tsx`, `Secondary.tsx`, `Neutral.tsx` có cấu trúc gần như y hệt nhau, chỉ khác nhau về giá trị `box-shadow` và tiêu đề. Đây là một sự lãng phí và tạo ra gánh nặng bảo trì rất lớn.
-  * **Tên định danh ghép từ:** Các tên như `StyledSubtitletext01`, `StyledSectionWrapperTitles`, `StyledShadowCard` vi phạm nghiêm trọng quy tắc cốt lõi của chúng ta.
-  * **Giá trị Hardcode:** Tất cả các giá trị style (`box-shadow`, `color`, `font-size`) đều được viết trực tiếp vào mã, hoàn toàn bỏ qua `theme` object và lớp `adapter` mà chúng ta vừa vất vả xây dựng.
-  * **Thiết kế tĩnh:** Component được thiết kế để hiển thị một tập hợp bóng đổ duy nhất và không thể tái sử dụng cho bất kỳ mục đích nào khác.
+  * **Tên định danh Thảm họa:** `StyledColorname01span`, `StyledHexcode02span`, `StyledMastercolorcard15`, `StyledFlexHorizontal23`. Đây là những cái tên vô nghĩa, được đánh số thứ tự, khiến việc bảo trì là không thể. Nó vi phạm quy tắc đơn từ một cách nghiêm trọng.
+  * **Lặp lại Mã (DRY Violation) ở Mức độ Cực lớn:** Hàng chục styled-component được định nghĩa chỉ để phục vụ một mục đích duy nhất, trong khi về bản chất chúng hoàn toàn giống nhau, chỉ khác một giá trị màu.
+  * **Bỏ qua Hoàn toàn Kiến trúc:**
+      * Mã này import `styled` trực tiếp, hoàn toàn phớt lờ lớp `adapter` mà chúng ta vừa xây dựng.
+      * Nó hardcode mọi giá trị (màu sắc, font-size, padding), bỏ qua `theme` object.
+      * Nó sử dụng các CSS variable lạ (`var(--Global-Texts-Color-4, #19213D)`) không thuộc hệ thống của chúng ta.
+  * **Không thể Tái sử dụng:** Toàn bộ file là một component tĩnh khổng lồ, không có khả năng tái sử dụng bất kỳ phần nào.
 
-**Mục tiêu kiến trúc tiếp theo:**
+**Phán quyết & Mục tiêu kiến trúc:**
+**KHÔNG SỬA CHỮA MÃ NÀY.** Chúng ta sẽ trích xuất **DỮ LIỆU** (các mã màu) từ nó và xây dựng lại theo đúng kiến trúc, với các mục tiêu sau:
 
-1.  **Hoàn thiện Core UI:** Tích hợp các token còn thiếu (như `shadow`) vào `theme` và tạo ra các component nguyên tử còn thiếu (`Card`, `Typography`, `Layout`).
-2.  **Xây dựng một trang `Showcase`:** Thay vì tạo các component riêng lẻ chỉ để hiển thị style, chúng ta sẽ xây dựng một trang duy nhất để trực quan hóa toàn bộ hệ thống thiết kế. Trang này sẽ là công cụ để chúng ta kiểm tra, xác minh và phát triển các component.
+1.  **Hoàn thiện `theme.color`:** Làm giàu cho `theme` object với một bảng màu đầy đủ, có cấu trúc.
+2.  **Xây dựng Component `Swatch`:** Tạo một component nguyên tử mới, có thể tái sử dụng, để hiển thị một mẫu màu.
+3.  **Nâng cấp `Showcase`:** Biến trang showcase hiện tại thành một "style guide sống", có khả năng tự động hiển thị toàn bộ bảng màu từ `theme`.
 
 -----
 
@@ -34,143 +39,223 @@ Tôi đã xem xét các file mã `tsx` cho "Primary", "Secondary", và "Neutral"
 **Gửi:** Coder
 **Từ:** Guardian
 **Ngày:** 2025-06-25
-**Chủ đề:** Hoàn thiện Core UI và Xây dựng Showcase
+**Chủ đề:** Hoàn thiện Hệ thống Design Token và Nâng cấp Showcase
 
 ---
 
 ### **1. ĐÁNH GIÁ CÔNG VIỆC TRƯỚC**
 
-Việc triển khai lớp Adapter đã hoàn tất một cách xuất sắc. Toàn bộ mã nguồn ứng dụng hiện đã được tách rời khỏi các thư viện bên ngoài, đạt được một cột mốc kiến trúc quan trọng.
+Bạn đã hoàn thành xuất sắc việc xây dựng các UI atom và trang Showcase ban đầu. Lớp Adapter cũng đã được tích hợp thành công. Nền tảng hiện tại rất tốt.
 
 ### **2. MỤC TIÊU KIẾN TRÚC TIẾP THEO**
 
-Nhiệm vụ này tập trung vào việc hoàn thiện các phần cốt lõi của hệ thống UI và xây dựng một trang `Showcase` để trực quan hóa các token và component của chúng ta. Điều này sẽ loại bỏ nhu cầu tạo các file hiển thị tĩnh và cung cấp một môi trường để phát triển và kiểm thử UI một cách nhất quán.
+Nhiệm vụ này tập trung vào việc hoàn thiện hệ thống design token, đặc biệt là màu sắc, và nâng cấp trang Showcase để nó có thể tự động trực quan hóa các token này. Chúng ta sẽ trích xuất dữ liệu màu sắc từ file Figma-export và loại bỏ hoàn toàn mã rác đó.
 
 ### **3. DANH SÁCH NHIỆM VỤ CHI TIẾT**
 
-#### **Nhiệm vụ 1: Mở rộng `theme` với các `shadow` tokens (TODO-013)**
+**QUAN TRỌNG:** Hãy thực hiện các nhiệm vụ một cách chính xác. Tôi sẽ cung cấp các đoạn mã chi tiết, bạn chỉ cần triển khai đúng như vậy.
 
-* **Hành động:** Chỉnh sửa file `src/core/theme.ts`.
-* **Mô tả:** Trừu tượng hóa các giá trị `box-shadow` từ mã Figma và thêm chúng vào `theme` object.
-* **Yêu cầu:**
-    * Trong `theme` object, cập nhật key `shadow` để chứa các giá trị cho `primary`, `secondary`, và `neutral`.
-    * Sử dụng các tên đơn từ `xs`, `sm`, `md`, `lg` để định danh các kích thước shadow.
+#### **Nhiệm vụ 1: Hoàn thiện `theme.color` (TODO-018)**
+
+* **Hành động:** Mở và chỉnh sửa file `src/core/theme.ts`.
+* **Mô tả:** Trích xuất tất cả các giá trị màu từ file Figma-export và cập nhật vào `theme.color`.
+* **Yêu cầu:** Sao chép và thay thế toàn bộ object `color` trong `theme.ts` bằng cấu trúc chính xác dưới đây.
 
     ```typescript
-    // Ví dụ trong src/core/theme.ts
-    const shadow = {
+    // src/core/theme.ts (phần color)
+    const color = {
         primary: {
-            xs: "0px 0px 2px rgba(77, 145, 225, 0.23)",
-            sm: "0px 4px 8px rgba(77, 145, 225, 0.10)",
-            md: "0px 8px 15px rgba(77, 145, 225, 0.10)",
-            lg: "0px 8px 24px rgba(77, 145, 225, 0.10)",
+            100: "#2388FF",
+            200: "#FF2D46",
+            300: "#FFC700",
+            400: "#63DE77"
         },
         secondary: {
-            xs: "0px 0px 2px rgba(155, 32, 47, 0.10)",
-            sm: "0px 4px 8px rgba(155, 32, 47, 0.10)",
-            md: "0px 8px 15px rgba(155, 32, 47, 0.10)",
-            lg: "0px 8px 24px rgba(155, 32, 47, 0.14)",
+            100: "#1777E7",
+            200: "#F6FAFF", // Light Blue
+            300: "#DE1F35",
+            400: "#FFE8EA", // Light Red
+            500: "#e79800",
+            600: "#fff9e5", // Light Yellow
+            700: "#37C972",
+            800: "#e5f8e8"  // Light Green
         },
         neutral: {
-            xs: "0px 1px 3px rgba(25, 33, 61, 0.10)",
-            sm: "0px 2px 4px rgba(25, 33, 61, 0.08)",
-            md: "0px 8px 15px rgba(25, 33, 61, 0.10)",
-            lg: "0px 8px 24px rgba(25, 33, 61, 0.12)",
+            100: "#ffffff",
+            200: "#f8faff",
+            300: "#f1f3f7",
+            400: "#e1e4ed",
+            500: "#b4b9c9",
+            600: "#6d758f",
+            700: "#353e5c",
+            800: "#19213d"
+        },
+        overlay: {
+            light: {
+                100: "rgba(255, 255, 255, 0.40)",
+                200: "rgba(255, 255, 255, 0.50)",
+                300: "rgba(255, 255, 255, 0.65)",
+                400: "rgba(255, 255, 255, 0.80)"
+            },
+            dark: {
+                100: "rgba(25, 33, 61, 0.40)",
+                200: "rgba(25, 33, 61, 0.50)",
+                300: "rgba(25, 33, 61, 0.65)",
+                400: "rgba(25, 33, 61, 0.80)"
+            }
+        },
+        gradient: {
+            red: "linear-gradient(47deg, #DF001B 0%, #FFDDDF 100%)",
+            blue: "linear-gradient(45deg, #0075FF 0%, #D0EBFF 100%)",
+            yellow: "linear-gradient(45deg, #FF9416 0%, #FFE03A 100%)",
+            green: "linear-gradient(45deg, #3ACD52 0%, #7DFFA2 100%)"
+        },
+        border: {
+            // Thêm các màu border được sử dụng
+            light: "#F0F2F5",
+            medium: "#E3E6EA"
         }
     };
     ```
 
-#### **Nhiệm vụ 2: Xây dựng Component `Card` (TODO-014)**
+#### **Nhiệm vụ 2: Xây dựng Component `Swatch` (TODO-019)**
 
-* **Hành động:** Tạo file `src/ui/atom/card.tsx`.
-* **Mô tả:** Tạo một component `Card` có thể tái sử dụng, thay thế cho các `StyledShadowCard` lặp đi lặp lại.
-* **Yêu cầu:**
-    * Component `Card` phải nhận một prop `shadow` để áp dụng `box-shadow` tương ứng từ `theme`.
-    * Sử dụng lớp `adapter` cho các import từ `react` và `styled-components`.
+* **Hành động:** Tạo một file mới `src/ui/atom/swatch.tsx`.
+* **Mô tả:** Component này dùng để hiển thị một mẫu màu, tên và mã hex của nó. Nó phải hoàn toàn tái sử dụng được.
+* **Yêu cầu:** Triển khai chính xác nội dung file như sau:
 
     ```typescript
-    // Ví dụ trong src/ui/atom/card.tsx
+    // src/ui/atom/swatch.tsx
     import { style } from '@/adapter';
-    import type { FC, Node } from '@/adapter';
+    import type { FC } from '@/adapter';
     import { theme } from '@/core/theme';
 
-    type ShadowKey = keyof typeof theme.shadow.primary;
-
     interface Props {
-        children: Node;
-        variant?: 'primary' | 'secondary' | 'neutral';
-        shadow?: ShadowKey;
+        name: string;
+        color: string;
     }
-    
-    const Element = style('div')<Props>`
-        background: ${theme.color.neutral[100]};
-        border-radius: ${theme.radius.large};
-        padding: ${theme.space[4]};
-        /* Logic để áp dụng shadow động */
-        box-shadow: ${({ variant = 'neutral', shadow = 'sm' }) => theme.shadow[variant][shadow]};
+
+    const Container = style('div')`
+        display: flex;
+        flex-direction: column;
+        width: 160px;
+        box-shadow: ${theme.shadow.neutral.sm};
+        border-radius: ${theme.radius.medium};
+        overflow: hidden;
+        border: 1px solid ${theme.color.border.medium};
     `;
 
-    export const Card: FC<Props> = ({ children, ...rest }) => (
-        <Element {...rest}>{children}</Element>
-    );
+    const Block = style('div')<{ color: string }>`
+        height: 100px;
+        background: ${({ color }) => color};
+    `;
+
+    const Info = style('div')`
+        padding: ${theme.space[2]} ${theme.space[3]};
+        background: ${theme.color.neutral[100]};
+    `;
+
+    const Name = style('p')`
+        font-weight: ${theme.typography.weight.bold};
+        font-size: 14px;
+        color: ${theme.color.neutral[800]};
+        margin: 0 0 ${theme.space[1]} 0;
+    `;
+
+    const Hex = style('p')`
+        font-family: monospace;
+        font-size: 12px;
+        color: ${theme.color.neutral[600]};
+        margin: 0;
+        text-transform: uppercase;
+    `;
+
+    export const Swatch: FC<Props> = ({ name, color }) => {
+        return (
+            <Container>
+                <Block color={color} />
+                <Info>
+                    <Name>{name}</Name>
+                    <Hex>{color}</Hex>
+                </Info>
+            </Container>
+        );
+    };
     ```
 
-#### **Nhiệm vụ 3: Xây dựng Components Typography (TODO-015)**
+#### **Nhiệm vụ 3: Nâng cấp `Showcase` để hiển thị Màu sắc (TODO-020)**
 
-* **Hành động:** Tạo file `src/ui/atom/typography.tsx`.
-* **Mô tả:** Tạo các component `Title`, `Subtitle`, `Text` để thay thế các `span` được styled thủ công.
-* **Yêu cầu:**
-    * Mỗi component phải lấy style (font-size, font-weight, line-height) từ `theme.typography`.
-    * Tất cả phải là các component đơn giản, tuân thủ quy tắc đơn từ.
+* **Hành động:** Chỉnh sửa file `src/main.tsx` (hoặc file chứa component `App` của bạn).
+* **Mô tả:** Tái cấu trúc trang `Showcase` để nó có thể hiển thị cả `shadows` và `colors` một cách có hệ thống. Trang `Showcase` sẽ tự động render các màu từ `theme` object.
+* **Yêu cầu:** Cấu trúc lại component `App` để render các section một cách động. Dưới đây là ví dụ cho việc render các màu `primary`. **Bạn phải áp dụng pattern tương tự cho tất cả các nhóm màu khác (`secondary`, `neutral`, etc.).**
 
-#### **Nhiệm vụ 4: Xây dựng Trang `Showcase` (TODO-016)**
+    ```tsx
+    // src/main.tsx (ví dụ phần App)
+    import { style } from '@/adapter';
+    import type { FC } from '@/adapter';
+    import { theme } from '@/core/theme';
+    import { Card } from '@/ui/atom/card';
+    import { Title, Subtitle, Text } from '@/ui/atom/typography';
+    import { Swatch } from '@/ui/atom/swatch'; // Import component mới
 
-* **Hành động:** Chỉnh sửa file `src/main.tsx` để xây dựng một trang hiển thị (showcase).
-* **Mô tả:** Thay vì render một trang trống, hãy tạo một trang showcase để trực quan hóa các `shadow` token bằng cách sử dụng component `Card` mới.
-* **Yêu cầu:**
-    * Tạo một component `App` trong `main.tsx`.
-    * Bên trong `App`, render một danh sách các `Card`, mỗi `Card` có một giá trị `shadow` khác nhau từ `theme`.
-    * Sử dụng các component Typography từ Nhiệm vụ 3 để thêm tiêu đề.
-    * **Ví dụ về cấu trúc JSX trong `App`:**
-        ```tsx
-        const App = () => (
-          <div>
-            <Title>Shadows Showcase</Title>
-            
-            <Subtitle>Primary</Subtitle>
-            <div style={{ display: 'flex', gap: '24px' }}>
-              <Card variant="primary" shadow="xs"><Text>XS</Text></Card>
-              <Card variant="primary" shadow="sm"><Text>SM</Text></Card>
-              <Card variant="primary" shadow="md"><Text>MD</Text></Card>
-              <Card variant="primary" shadow="lg"><Text>LG</Text></Card>
-            </div>
+    // ... (Giữ lại Global, Section, Showcase) ...
+    
+    // Component để hiển thị một nhóm màu
+    const Palette: FC<{ title: string; colors: Record<string, string> }> = ({ title, colors }) => (
+        <Section title={title}>
+            {Object.entries(colors).map(([name, hex]) => (
+                <Swatch key={name} name={name} color={hex} />
+            ))}
+        </Section>
+    );
 
-            {/* Lặp lại cho secondary và neutral */}
-          </div>
-        );
-        ```
+    const App: FC = () => (
+        <main>
+            <Title>LanguageUI Showcase</Title>
 
-#### **Nhiệm vụ 5: Dọn dẹp (TODO-017)**
+            {/* PHẦN HIỂN THỊ MÀU SẮC */}
+            <Palette title="Primary Colors" colors={theme.color.primary} />
+            <Palette title="Secondary Colors" colors={theme.color.secondary} />
+            <Palette title="Neutral Colors" colors={theme.color.neutral} />
+            {/* Thêm các section cho Overlay và Gradient nếu cần */}
 
-* **Hành động:** Xóa các file `Primary.tsx`, `Secondary.tsx`, `Neutral.tsx` và bất kỳ file tạm thời nào khác được tạo ra từ Figma.
-* **Mục tiêu:** Giữ cho codebase sạch sẽ, chỉ chứa các component và module đã được duyệt về mặt kiến trúc.
+            {/* PHẦN HIỂN THỊ SHADOWS (Giữ lại từ trước) */}
+            <Section title="Primary Shadows">
+                {/* ... cards ... */}
+            </Section>
+            <Section title="Secondary Shadows">
+                {/* ... cards ... */}
+            </Section>
+            <Section title="Neutral Shadows">
+                {/* ... cards ... */}
+            </Section>
+        </main>
+    );
+
+    // ... (Phần render của dom) ...
+    ```
+
+#### **Nhiệm vụ 4: Dọn dẹp (TODO-021)**
+
+* **Hành động:** Xóa file `tsx` chứa mã màu do Figma sinh ra.
+* **Mục tiêu:** Đảm bảo codebase không chứa bất kỳ mã nguồn nào được sinh tự động và không tuân thủ kiến trúc.
 
 ### **4. QUY TRÌNH BÁO CÁO VÀ BÀN GIAO**
 
 Sau khi hoàn thành **TẤT CẢ** các nhiệm vụ trên:
 
-1.  **Cập nhật file Báo cáo:** Cập nhật file `REPORT.md` với trạng thái mới nhất.
-2.  **Commit và Push code:** Sử dụng message commit theo đúng chuẩn.
+1.  **Cập nhật file Báo cáo:** Mở file `REPORT.md` và cập nhật trạng thái mới nhất.
+2.  **Commit và Push code:** Sử dụng message commit chính xác.
 
     ```bash
     git add .
-    git commit -m "feat(core): complete core UI atoms and build showcase"
+    git commit -m "feat(theme): enrich color system and enhance showcase"
     git push
     ```
 
 ### **5. LỜI KẾT**
 
-Mục tiêu của chúng ta là xây dựng một hệ thống thiết kế "sống", nơi các token và component cốt lõi có thể được trực quan hóa và kiểm thử một cách tự động. Trang `Showcase` là bước đầu tiên để hiện thực hóa điều đó. Hãy tiếp tục duy trì kỷ luật và chất lượng cao.
+Đây là một bước quan trọng để xây dựng một hệ thống thiết kế "sống" và tự ghi chép (self-documenting). Khi `theme` thay đổi, `Showcase` sẽ tự động cập nhật. Kỷ luật hôm nay là sự ổn định của ngày mai. Hãy thực thi cẩn thận.
 
 **Guardian.**
 ````

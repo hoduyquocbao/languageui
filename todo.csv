@@ -14,3 +14,7 @@ ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
 15,UI,Atom,"Develop a set of typography components (Title, Subtitle, Text) to ensure consistent text styling across the application.",High,Done,Coder,2025-06-25,"Ref: TODO-015"
 16,UI,Showcase,"Create a Showcase page to visually demonstrate all design tokens and components, providing a live style guide.",High,Done,Coder,2025-06-25,"Ref: TODO-016"
 17,Project,Maintenance,"Verify that no temporary Figma-generated files existed, ensuring a clean codebase.",Medium,Done,Coder,2025-06-25,"Ref: TODO-017"
+18,UI,Core,"Enrich the theme's color palette by replacing the existing color object with a comprehensive new structure.",High,Done,Coder,2025-06-25,"Ref: TODO-018"
+19,UI,Atom,"Build a reusable Swatch component to visually represent a color and its metadata.",High,Done,Coder,2025-06-25,"Ref: TODO-019"
+20,UI,Showcase,"Upgrade the Showcase page to dynamically render the entire color palette from the theme.",High,Done,Coder,2025-06-25,"Ref: TODO-020"
+21,Project,Maintenance,"Scan the codebase and remove any auto-generated Figma files to maintain architectural integrity.",Medium,Done,Coder,2025-06-25,"Ref: TODO-021"

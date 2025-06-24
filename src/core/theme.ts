@@ -9,16 +9,52 @@ const color = {
     primary: {
         100: "#2388FF",
         200: "#FF2D46",
+        300: "#FFC700",
+        400: "#63DE77"
+    },
+    secondary: {
+        100: "#1777E7",
+        200: "#F6FAFF", // Light Blue
+        300: "#DE1F35",
+        400: "#FFE8EA", // Light Red
+        500: "#e79800",
+        600: "#fff9e5", // Light Yellow
+        700: "#37C972",
+        800: "#e5f8e8"  // Light Green
     },
     neutral: {
         100: "#ffffff",
-        200: "#000000",
+        200: "#f8faff",
+        300: "#f1f3f7",
+        400: "#e1e4ed",
+        500: "#b4b9c9",
+        600: "#6d758f",
+        700: "#353e5c",
+        800: "#19213d"
+    },
+    overlay: {
+        light: {
+            100: "rgba(255, 255, 255, 0.40)",
+            200: "rgba(255, 255, 255, 0.50)",
+            300: "rgba(255, 255, 255, 0.65)",
+            400: "rgba(255, 255, 255, 0.80)"
+        },
+        dark: {
+            100: "rgba(25, 33, 61, 0.40)",
+            200: "rgba(25, 33, 61, 0.50)",
+            300: "rgba(25, 33, 61, 0.65)",
+            400: "rgba(25, 33, 61, 0.80)"
+        }
     },
     gradient: {
-        primary: "linear-gradient(180deg, #2B7AFB 0%, #2174FD 100%)",
+        red: "linear-gradient(47deg, #DF001B 0%, #FFDDDF 100%)",
+        blue: "linear-gradient(45deg, #0075FF 0%, #D0EBFF 100%)",
+        yellow: "linear-gradient(45deg, #FF9416 0%, #FFE03A 100%)",
+        green: "linear-gradient(45deg, #3ACD52 0%, #7DFFA2 100%)"
     },
     border: {
-        primary: "#174BD2",
+        light: "#F0F2F5",
+        medium: "#E3E6EA"
     }
 };
 
