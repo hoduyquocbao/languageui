@@ -36,13 +36,17 @@ export type SVG<P = {}> = React.SVGProps<P>;
 
 // --- Styled-Components Adapter ---
 // Facade for creating styled components. Ex: `style('button')`
-export const style = (tag: any) => styled(tag);
-// Utility for writing CSS blocks.
-export const utility = cssUtil;
-// For creating global styles.
-export const global = createGlobalStyle;
-// The ThemeProvider component.
-export const Provider = ThemeProvider; // Export component dưới dạng PascalCase
+export const style = Object.assign(
+    (tag: any) => styled(tag),
+    {
+        // Utility for writing CSS blocks.
+        utility: cssUtil,
+        // For creating global styles.
+        global: createGlobalStyle,
+        // The ThemeProvider component.
+        provider: ThemeProvider,
+    }
+);
 
 // Re-exports the theme type.
 export type Theme = DefaultTheme;
@@ -50,20 +54,24 @@ export type Theme = DefaultTheme;
 
 // --- React-DOM Adapter ---
 /**
- * Encapsulates the logic for rendering the application into the DOM.
- * @param element The root React element to render.
- * @param containerId The ID of the DOM element to mount the app to.
+ * @name dom
+ * @description Encapsulates the React-DOM client for mounting the application.
+ * This follows the React 18 API for creating a root and rendering into it.
  */
-export function render(element: React.ReactElement, containerId: string) {
-    const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`DOM container with id '${containerId}' not found.`);
-        return;
+export const dom = {
+    /**
+     * @param {HTMLElement} container - The DOM element to mount the application into.
+     * @returns {object} An object with a `render` method.
+     */
+    root: (container: HTMLElement) => {
+        const root = ReactDOM.createRoot(container);
+        return {
+            /**
+             * @param {React.ReactElement} element - The root React element to render.
+             */
+            render: (element: React.ReactElement) => {
+                root.render(<React.StrictMode>{element}</React.StrictMode>);
+            }
+        };
     }
-    const root = ReactDOM.createRoot(container);
-    root.render(
-        <React.StrictMode>
-            {element}
-        </React.StrictMode>
-    );
-} 
+}; 

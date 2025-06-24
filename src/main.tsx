@@ -1,32 +1,101 @@
-import { Provider, render } from '@/adapter';
+/**
+ * @fileoverview
+ * This is the main entry point for the application.
+ * It sets up the global style, theme provider, and renders the main `App` component,
+ * which serves as a showcase for the UI design system.
+ */
+import { dom, style } from '@/adapter';
 import { theme } from '@/core/theme';
-import { Button } from '@/ui/atom/button';
-import { Icon } from '@/ui/atom/icon';
+import { Card } from '@/ui/atom/card';
+import { Title, Subtitle, Text } from '@/ui/atom/typography';
+import type { FC } from '@/adapter';
 
 /**
- * The main application component for showcasing UI elements.
+ * @name Global
+ * @description The global style component. It injects base styles into the application,
+ * such as background color and font smoothing, ensuring a consistent look and feel.
  */
-const App = () => (
-  <div style={{ padding: '2rem' }}>
-    <h1>Component Showcase</h1>
-    
-    <h2>Buttons</h2>
-    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-      <Button variant="primary" size="medium">Primary Button</Button>
-      <Button variant="secondary" size="small">Secondary Button</Button>
-      <Button variant="primary" state="disabled">Disabled</Button>
-      <Button variant="primary" prefix={<Icon name="search" />}>Search</Button>
-      <Button variant="secondary" suffix={<Icon name="arrow" />}>Next</Button>
-    </div>
-  </div>
+const Global = style.global`
+  body {
+    background-color: #f8f9fa;
+    font-family: ${theme.typography.font.primary};
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: ${theme.space[6]};
+  }
+`;
+
+/**
+ * @name Showcase
+ * @description A container for styling the showcase sections.
+ */
+const Showcase = style('div')`
+  display: flex;
+  gap: ${theme.space[5]};
+  margin-block: ${theme.space[4]};
+  flex-wrap: wrap;
+`;
+
+/**
+ * @name Section
+ * @description A component to visually group and title a set of showcase items.
+ * @param {object} props - The component props.
+ * @param {string} props.title - The title for the section.
+ * @param {React.ReactNode} props.children - The content of the section.
+ * @returns {JSX.Element} The rendered section.
+ */
+const Section: FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+    <section>
+        <Subtitle>{title}</Subtitle>
+        <Showcase>{children}</Showcase>
+    </section>
 );
 
 /**
- * Renders the application into the DOM.
+ * @name App
+ * @description The root component of the application.
+ * It renders a showcase of the design system's components, specifically demonstrating
+ * the different shadow variants applied to the Card component.
+ * @returns {JSX.Element} The rendered application component.
  */
-render(
-  <Provider theme={theme}>
-    <App />
-  </Provider>,
-  'root'
+const App: FC = () => (
+    <main>
+        <Title>LanguageUI Showcase</Title>
+
+        <Section title="Primary Shadows">
+            <Card variant="primary" shadow="xs"><Text>XS</Text></Card>
+            <Card variant="primary" shadow="sm"><Text>SM</Text></Card>
+            <Card variant="primary" shadow="md"><Text>MD</Text></Card>
+            <Card variant="primary" shadow="lg"><Text>LG</Text></Card>
+        </Section>
+
+        <Section title="Secondary Shadows">
+            <Card variant="secondary" shadow="xs"><Text>XS</Text></Card>
+            <Card variant="secondary" shadow="sm"><Text>SM</Text></Card>
+            <Card variant="secondary" shadow="md"><Text>MD</Text></Card>
+            <Card variant="secondary" shadow="lg"><Text>LG</Text></Card>
+        </Section>
+
+        <Section title="Neutral Shadows">
+            <Card variant="neutral" shadow="xs"><Text>XS</Text></Card>
+            <Card variant="neutral" shadow="sm"><Text>SM</Text></Card>
+            <Card variant="neutral" shadow="md"><Text>MD</Text></Card>
+            <Card variant="neutral" shadow="lg"><Text>LG</Text></Card>
+        </Section>
+    </main>
+);
+
+/**
+ * @name Root
+ * @description The main rendering setup for the application.
+ * It finds the root DOM element and renders the App, wrapped with the
+ * global style and the theme provider to enable access to design tokens
+ * throughout the component tree.
+ */
+const Root = dom.root(document.getElementById('root')!);
+Root.render(
+    <style.provider theme={theme}>
+        <Global />
+        <App />
+    </style.provider>
 );

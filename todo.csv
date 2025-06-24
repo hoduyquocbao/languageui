@@ -9,3 +9,8 @@ ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
 8,Architecture,Adapter,"Implement the adapter for `styled-components`.",High,Done,Coder,2025-06-28,"Ref: TODO-010"
 9,Architecture,Adapter,"Implement the adapter for `react-dom/client`.",High,Done,Coder,2025-06-28,"Ref: TODO-011"
 10,Architecture,Refactor,"Refactor the entire codebase to use the new Adapter layer instead of direct library imports.",High,Done,Coder,2025-06-28,"Ref: TODO-012"
+13,UI,Core,"Extend the core theme by adding a comprehensive set of shadow tokens, categorized into primary, secondary, and neutral variants.",High,Done,Coder,2025-06-25,"Ref: TODO-013"
+14,UI,Atom,"Build a reusable Card component that dynamically applies shadows from the theme, replacing repetitive styling.",High,Done,Coder,2025-06-25,"Ref: TODO-014"
+15,UI,Atom,"Develop a set of typography components (Title, Subtitle, Text) to ensure consistent text styling across the application.",High,Done,Coder,2025-06-25,"Ref: TODO-015"
+16,UI,Showcase,"Create a Showcase page to visually demonstrate all design tokens and components, providing a live style guide.",High,Done,Coder,2025-06-25,"Ref: TODO-016"
+17,Project,Maintenance,"Verify that no temporary Figma-generated files existed, ensuring a clean codebase.",Medium,Done,Coder,2025-06-25,"Ref: TODO-017"

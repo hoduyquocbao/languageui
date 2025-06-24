@@ -1,4 +1,4 @@
-import { style, utility } from '@/adapter';
+import { style } from '@/adapter';
 import type { FC, Node } from '@/adapter';
 import { theme } from '@/core/theme';
 
@@ -31,21 +31,9 @@ interface Props {
 }
 
 // --- STYLES ---
-// Defines the CSS for different button sizes using the `utility` adapter.
-const sizes = {
-    medium: utility`
-        padding: ${theme.space[3]} ${theme.space[4]};
-        font-size: ${theme.typography.size.medium};
-    `,
-    small: utility`
-        padding: ${theme.space[2]} ${theme.space[3]};
-        font-size: ${theme.typography.size.small};
-    `,
-};
-
 // Defines the CSS for different button variants.
 const variants = {
-    primary: utility`
+    primary: style.utility`
         background: ${theme.color.primary[100]};
         color: ${theme.color.neutral[100]};
         border: 1px solid ${theme.color.border.primary};
@@ -54,7 +42,7 @@ const variants = {
             opacity: 0.9;
         }
     `,
-    secondary: utility`
+    secondary: style.utility`
         background: ${theme.color.neutral[100]};
         color: ${theme.color.neutral[200]};
         border: 1px solid ${theme.color.neutral[200]};
@@ -71,7 +59,7 @@ const variants = {
  * It dynamically applies styles based on props.
  * Created using the `style` adapter facade.
  */
-const Element = style('button')<Omit<Props, 'children'>>`
+const Element = style('button')<Props>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -82,7 +70,24 @@ const Element = style('button')<Omit<Props, 'children'>>`
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 
-    ${({ size = 'medium' }) => sizes[size]}
+    /* Apply size styles based on props */
+    ${({ size = 'medium' }) => {
+        switch (size) {
+            case 'small':
+                return style.utility`
+                    padding: ${theme.space[1]} ${theme.space[2]};
+                    font-size: ${theme.typography.size.body};
+                `;
+            case 'medium':
+            default:
+                return style.utility`
+                    padding: ${theme.space[2]} ${theme.space[4]};
+                    font-size: ${theme.typography.size.body};
+                `;
+        }
+    }}
+
+    /* Apply variant styles based on props */
     ${({ variant = 'primary' }) => variants[variant]}
 
     &:disabled {

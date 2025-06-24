@@ -1,25 +1,30 @@
-# BÁO CÁO HOÀN THÀNH NHIỆM VỤ
+# CODER REPORT
 
-**Gửi:** Guardian
-**Từ:** Coder
-**Ngày:** 2025-06-28
-**Commit Hash:** 6ebaa05733f0becaf39796cc6999e2c1805e71aa
+**TO:** Guardian
+**FROM:** Coder
+**DATE:** 2025-06-25
+**SUBJECT:** Completion of Core UI Atoms and Showcase
 
 ---
 
-### **1. TRẠNG THÁI CÁC NHIỆM VỤ**
+### 1. SUMMARY OF COMPLETED TASKS
 
--   [x] **Nhiệm vụ 1:** Thiết lập Cấu trúc Thư mục `adapter`.
--   [x] **Nhiệm vụ 2:** Triển khai Adapter cho `react`.
--   [x] **Nhiệm vụ 3:** Triển khai Adapter cho `styled-components`.
--   [x] **Nhiệm vụ 4:** Triển khai Adapter cho `react-dom/client`.
--   [x] **Nhiệm vụ 5:** Tái cấu trúc (Refactor) Codebase để Sử dụng Adapter.
+This report confirms the successful completion of all tasks outlined in `Task.md` dated 2025-06-25. The primary objectives—completing the core UI atoms and building a visual showcase—have been achieved.
 
-### **2. GHI CHÚ THÊM (NẾU CÓ)**
+- **TODO-013: Theme Shadow Expansion:** The core theme (`theme.ts`) was successfully extended with a comprehensive set of `shadow` tokens.
+- **TODO-014: `Card` Component:** A reusable `Card` component was built (`ui/atom/card.tsx`) which dynamically applies shadows from the theme.
+- **TODO-015: Typography Components:** A new `Typography` module (`ui/atom/typography.tsx`) was created, providing `Title`, `Subtitle`, and `Text` components. The theme's typography scale was refactored to be more semantic.
+- **TODO-016: Showcase Page:** The main entry point (`main.tsx`) was transformed into a showcase page that visually renders and verifies the new components and tokens.
+- **TODO-017: Cleanup:** The project directory was scanned, and no temporary Figma-generated files were found.
+- **Build Verification:** The project successfully builds without errors after all changes.
 
-*   Việc triển khai Lớp Adapter đã hoàn tất thành công. Toàn bộ codebase hiện không còn import trực tiếp từ các thư viện bên ngoài.
-*   Đã gặp và giải quyết một số thách thức kỹ thuật:
-    *   Lỗi `Rollup failed to resolve import` được khắc phục bằng cách thêm plugin `vite-tsconfig-paths`.
-    *   Các lỗi liên quan đến `createGlobalStyle` và `ThemeProvider` được giải quyết bằng cách cấu trúc lại `main.tsx`.
-*   Đã bổ sung các chú thích chi tiết vào toàn bộ mã nguồn mới để tuân thủ quy tắc.
-*   Tất cả các file PKB (`todo`, `memories`, `architecture`) đã được cập nhật để phản ánh những thay đổi kiến trúc này. 
+### 2. ARCHITECTURAL DECISIONS & CHANGES
+
+- **Adapter Refactoring:** The `adapter` was refactored to expose a more intuitive API (e.g., `style.global`, `dom.root`), which resolved a build failure.
+- **Theme Standardization:** The theme's typography and shadow systems were standardized, eliminating ambiguity and the potential for hardcoded values. This change necessitated a minor refactor in the existing `Button` component, which now correctly uses the new theme tokens.
+
+### 3. FINAL COMMIT HASH
+
+The final commit hash for this body of work is: `[COMMIT_HASH_PLACEHOLDER]`
+
+All knowledge bases (`todo.csv`, `architecture.csv`, `memories.csv`) have been updated to reflect these changes. The system is stable, robust, and ready for the next set of instructions. 

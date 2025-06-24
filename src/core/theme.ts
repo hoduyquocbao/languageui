@@ -28,9 +28,9 @@ const typography = {
         primary: "'Inter', sans-serif",
     },
     size: {
-        small: "12px",
-        medium: "14px",
-        large: "16px",
+        body: "14px",
+        subtitle: "20px",
+        title: "28px",
     },
     weight: {
         regular: 400,
@@ -38,10 +38,31 @@ const typography = {
     }
 };
 
-// Shadow tokens provide consistent elevation styles.
+/**
+ * @name shadow
+ * @description Defines the box-shadow tokens for the application, categorized by semantic meaning.
+ * Each category (primary, secondary, neutral) provides a scale of shadows (xs, sm, md, lg)
+ * to ensure consistent depth and elevation across the UI.
+ */
 const shadow = {
-    small: "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
-    medium: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+    primary: {
+        xs: "0px 0px 2px rgba(77, 145, 225, 0.23)",
+        sm: "0px 4px 8px rgba(77, 145, 225, 0.10)",
+        md: "0px 8px 15px rgba(77, 145, 225, 0.10)",
+        lg: "0px 8px 24px rgba(77, 145, 225, 0.10)",
+    },
+    secondary: {
+        xs: "0px 0px 2px rgba(155, 32, 47, 0.10)",
+        sm: "0px 4px 8px rgba(155, 32, 47, 0.10)",
+        md: "0px 8px 15px rgba(155, 32, 47, 0.10)",
+        lg: "0px 8px 24px rgba(155, 32, 47, 0.14)",
+    },
+    neutral: {
+        xs: "0px 1px 3px rgba(25, 33, 61, 0.10)",
+        sm: "0px 2px 4px rgba(25, 33, 61, 0.08)",
+        md: "0px 8px 15px rgba(25, 33, 61, 0.10)",
+        lg: "0px 8px 24px rgba(25, 33, 61, 0.12)",
+    }
 };
 
 // Radius tokens are used for border-radius properties.

@@ -1,43 +1,28 @@
 Gửi Coder,
 
-Tôi là Guardian. Tôi đã xem xét toàn bộ các thay đổi bạn đã push lên repository `languageui` cùng với file `REPORT.md`.
+Tôi là Guardian. Tôi đã xem xét commit gần nhất của bạn (`6ebaa05...`) và bản báo cáo trong `REPORT.md`.
 
-**Đánh giá:** Xuất sắc. Bạn đã triển khai nền tảng kiến trúc UI nguyên tử một cách chính xác, tuân thủ nghiêm ngặt các yêu cầu về `theme`, component `Icon` động, và `Button` động. Các file mã nguồn sạch sẽ, tuân thủ quy tắc đơn từ ở cấp độ component, và nợ kỹ thuật từ mã Figma-export đã được xử lý.
+**Đánh giá:** Công việc xuất sắc. Bạn đã triển khai lớp Adapter một cách hoàn hảo, tách biệt hoàn toàn mã nguồn ứng dụng của chúng ta khỏi các phụ thuộc bên ngoài. Nền tảng kiến trúc của chúng ta giờ đây cực kỳ vững chắc và thuần khiết. `todo.csv` đã được cập nhật chính xác.
 
-Bây giờ nền tảng đã vững chắc, chúng ta sẽ tiến đến một bước đi kiến trúc tiếp theo, một bước đi sẽ đưa triết lý của chúng ta lên một tầm cao mới và bảo vệ hệ thống khỏi sự biến động của các thư viện bên ngoài.
+Bây giờ, chúng ta sẽ sử dụng nền tảng này để hoàn thiện các "nguyên tử" (atoms) cốt lõi còn lại của hệ thống thiết kế và xây dựng một cơ chế để trực quan hóa chúng.
 
 -----
 
-## Phân tích Kiến trúc và Yêu cầu Tiếp theo
+## Phân tích Vấn đề & Mục tiêu Tiếp theo
 
-### Vấn đề hiện tại: Sự phụ thuộc tường minh (Explicit Dependency)
+Tôi đã xem xét các file mã `tsx` cho "Primary", "Secondary", và "Neutral" mà bạn cung cấp. Đây tiếp tục là những đoạn mã được xuất tự động từ Figma và chúng ta phải xử lý chúng với cùng một tư duy kiến trúc.
 
-Mặc dù các component của chúng ta (`Button`, `Icon`) đã tuân thủ quy tắc, mã nguồn *bên trong* chúng vẫn phải gọi trực tiếp đến các thư viện bên ngoài với các API không phải đơn từ của họ.
+**Vấn đề của mã được cung cấp:**
 
-  * `import React, { useState } from 'react';`
-  * `import ReactDOM from 'react-dom/client';`
-  * `import styled, { css } from 'styled-components';`
-  * Các lệnh gọi như `useState(...)`, `styled.button`, `ReactDOM.createRoot(...)` vẫn là các định danh ghép hoặc có namespace.
+  * **Lặp lại mã (DRY violation):** Ba file `Primary.tsx`, `Secondary.tsx`, `Neutral.tsx` có cấu trúc gần như y hệt nhau, chỉ khác nhau về giá trị `box-shadow` và tiêu đề. Đây là một sự lãng phí và tạo ra gánh nặng bảo trì rất lớn.
+  * **Tên định danh ghép từ:** Các tên như `StyledSubtitletext01`, `StyledSectionWrapperTitles`, `StyledShadowCard` vi phạm nghiêm trọng quy tắc cốt lõi của chúng ta.
+  * **Giá trị Hardcode:** Tất cả các giá trị style (`box-shadow`, `color`, `font-size`) đều được viết trực tiếp vào mã, hoàn toàn bỏ qua `theme` object và lớp `adapter` mà chúng ta vừa vất vả xây dựng.
+  * **Thiết kế tĩnh:** Component được thiết kế để hiển thị một tập hợp bóng đổ duy nhất và không thể tái sử dụng cho bất kỳ mục đích nào khác.
 
-Điều này tạo ra một sự **khớp nối chặt (tight coupling)** giữa logic ứng dụng của chúng ta và API của các thư viện bên ngoài. Nếu trong tương lai chúng ta muốn đổi `styled-components` sang `Emotion`, hoặc một thay đổi lớn trong API của React xảy ra, chúng ta sẽ phải đi sửa ở rất nhiều nơi.
+**Mục tiêu kiến trúc tiếp theo:**
 
-### Giải pháp: Lớp Adapter (The Adapter Layer)
-
-Để giải quyết vấn đề này và đạt được sự thuần khiết tối đa trong mã nguồn ứng dụng, chúng ta sẽ giới thiệu một lớp kiến trúc mới: **Adapter**.
-
-**Triết lý:** Lớp Adapter đóng vai trò như một **lớp chống tham nhũng (Anti-Corruption Layer)**. Nó sẽ bao bọc (encapsulate) **tất cả** các thư viện bên ngoài, cung cấp một API nội bộ tuân thủ 100% quy tắc đơn từ cho phần còn lại của ứng dụng.
-
-**Luồng phụ thuộc mới:**
-`External Libraries` -\> `[Adapter Layer]` -\> `Our Application Code (Components, Hooks, etc.)`
-
-Mã nguồn ứng dụng của chúng ta sẽ **không bao giờ** import trực tiếp từ `react`, `styled-components`, v.v. nữa. Thay vào đó, nó sẽ chỉ import từ `adapter` của chúng ta.
-
-**Lợi ích:**
-
-1.  **Độ thuần khiết kiến trúc:** Logic ứng dụng của chúng ta sẽ gần như hoàn toàn chỉ bao gồm các định danh đơn từ, đạt được mục tiêu cuối cùng của triết lý.
-2.  **Khớp nối lỏng (Decoupling):** Hệ thống của chúng ta không còn bị phụ thuộc vào một thư viện cụ thể. Việc thay thế một thư viện chỉ yêu cầu cập nhật một file duy nhất trong lớp Adapter, không ảnh hưởng đến hàng trăm file component khác.
-3.  **Kiểm soát tập trung:** Tất cả các điểm tiếp xúc với thế giới bên ngoài được quản lý tại một nơi duy nhất.
-4.  **API đơn giản hóa:** Chúng ta có thể tạo ra các hàm facade đơn giản hơn, che giấu sự phức tạp không cần thiết từ các thư viện gốc.
+1.  **Hoàn thiện Core UI:** Tích hợp các token còn thiếu (như `shadow`) vào `theme` và tạo ra các component nguyên tử còn thiếu (`Card`, `Typography`, `Layout`).
+2.  **Xây dựng một trang `Showcase`:** Thay vì tạo các component riêng lẻ chỉ để hiển thị style, chúng ta sẽ xây dựng một trang duy nhất để trực quan hóa toàn bộ hệ thống thiết kế. Trang này sẽ là công cụ để chúng ta kiểm tra, xác minh và phát triển các component.
 
 -----
 
@@ -49,182 +34,143 @@ Mã nguồn ứng dụng của chúng ta sẽ **không bao giờ** import trực
 **Gửi:** Coder
 **Từ:** Guardian
 **Ngày:** 2025-06-25
-**Chủ đề:** Giới thiệu Lớp Adapter và Tái cấu trúc Phụ thuộc
+**Chủ đề:** Hoàn thiện Core UI và Xây dựng Showcase
 
 ---
 
 ### **1. ĐÁNH GIÁ CÔNG VIỆC TRƯỚC**
 
-Công việc triển khai nền tảng UI nguyên tử đã được hoàn thành xuất sắc. Các component `Button`, `Icon` và `theme` đã được xây dựng đúng theo kiến trúc. Nền tảng hiện tại đã sẵn sàng cho bước tiếp theo.
+Việc triển khai lớp Adapter đã hoàn tất một cách xuất sắc. Toàn bộ mã nguồn ứng dụng hiện đã được tách rời khỏi các thư viện bên ngoài, đạt được một cột mốc kiến trúc quan trọng.
 
 ### **2. MỤC TIÊU KIẾN TRÚC TIẾP THEO**
 
-Nhiệm vụ này tập trung vào việc xây dựng **Lớp Adapter** để bao bọc tất cả các thư viện bên ngoài. Mục tiêu là để mã nguồn ứng dụng của chúng ta chỉ phụ thuộc vào API nội bộ tuân thủ quy tắc đơn từ, giúp tăng tính bền vững và khả năng bảo trì của dự án.
+Nhiệm vụ này tập trung vào việc hoàn thiện các phần cốt lõi của hệ thống UI và xây dựng một trang `Showcase` để trực quan hóa các token và component của chúng ta. Điều này sẽ loại bỏ nhu cầu tạo các file hiển thị tĩnh và cung cấp một môi trường để phát triển và kiểm thử UI một cách nhất quán.
 
 ### **3. DANH SÁCH NHIỆM VỤ CHI TIẾT**
 
-#### **Nhiệm vụ 1: Thiết lập Cấu trúc Thư mục `adapter` (TODO-008)**
+#### **Nhiệm vụ 1: Mở rộng `theme` với các `shadow` tokens (TODO-013)**
 
-* **Hành động:** Tạo cấu trúc thư mục và file cho lớp Adapter.
+* **Hành động:** Chỉnh sửa file `src/core/theme.ts`.
+* **Mô tả:** Trừu tượng hóa các giá trị `box-shadow` từ mã Figma và thêm chúng vào `theme` object.
 * **Yêu cầu:**
-    * Tạo thư mục `src/adapter`.
-    * Bên trong `src/adapter`, tạo các file sau:
-        * `react.ts` (để bao bọc thư viện `react`)
-        * `style.ts` (để bao bọc `styled-components`)
-        * `dom.ts` (để bao bọc `react-dom/client`)
+    * Trong `theme` object, cập nhật key `shadow` để chứa các giá trị cho `primary`, `secondary`, và `neutral`.
+    * Sử dụng các tên đơn từ `xs`, `sm`, `md`, `lg` để định danh các kích thước shadow.
 
-#### **Nhiệm vụ 2: Triển khai Adapter cho `react` (TODO-009)**
-
-* **Hành động:** Viết mã trong `src/adapter/react.ts` để xuất ra các hàm/hook của React dưới tên đơn từ.
-* **Yêu cầu:**
     ```typescript
-    // src/adapter/react.ts
-    import React from 'react';
-
-    // Re-export các hook và hàm cốt lõi dưới dạng tên đơn từ
-    export const state = React.useState;
-    export const effect = React.useEffect;
-    export const context = React.useContext;
-    export const reducer = React.useReducer;
-    export const memo = React.useMemo;
-    export const callback = React.useCallback;
-    export const ref = React.useRef;
-    export const lazy = React.lazy;
-    export const suspense = React.Suspense;
-
-    // Xuất các type cần thiết
-    export type Node = React.ReactNode;
-    export type Element = React.ReactElement;
-    export type FC<P = {}> = React.FC<P>;
-    ```
-
-#### **Nhiệm vụ 3: Triển khai Adapter cho `styled-components` (TODO-010)**
-
-* **Hành động:** Viết mã trong `src/adapter/style.ts`.
-* **Yêu cầu:** Tạo một facade đơn giản thay vì export trực tiếp.
-    ```typescript
-    // src/adapter/style.ts
-    import styled, {
-        css as cssUtil,
-        createGlobalStyle,
-        ThemeProvider,
-        DefaultTheme
-    } from 'styled-components';
-
-    // Tạo một hàm facade 'style' đơn giản
-    // Ví dụ: style('button') thay cho styled.button
-    type Tag = keyof JSX.IntrinsicElements;
-    export const style = (tag: Tag) => styled(tag);
-
-    // Re-export các utility dưới tên đơn từ
-    export const utility = cssUtil;
-    export const global = createGlobalStyle;
-    export const provider = ThemeProvider;
-
-    // Re-export type
-    export type Theme = DefaultTheme;
-    ```
-
-#### **Nhiệm vụ 4: Triển khai Adapter cho `react-dom/client` (TODO-011)**
-
-* **Hành động:** Viết mã trong `src/adapter/dom.ts`.
-* **Yêu cầu:** Đóng gói logic tạo root và render.
-    ```typescript
-    // src/adapter/dom.ts
-    import ReactDOM from 'react-dom/client';
-    import React from 'react';
-
-    // Đóng gói toàn bộ quá trình render vào một hàm đơn
-    export function render(element: React.ReactElement, containerId: string) {
-        const container = document.getElementById(containerId);
-        if (!container) {
-            console.error(`DOM container with id '${containerId}' not found.`);
-            return;
+    // Ví dụ trong src/core/theme.ts
+    const shadow = {
+        primary: {
+            xs: "0px 0px 2px rgba(77, 145, 225, 0.23)",
+            sm: "0px 4px 8px rgba(77, 145, 225, 0.10)",
+            md: "0px 8px 15px rgba(77, 145, 225, 0.10)",
+            lg: "0px 8px 24px rgba(77, 145, 225, 0.10)",
+        },
+        secondary: {
+            xs: "0px 0px 2px rgba(155, 32, 47, 0.10)",
+            sm: "0px 4px 8px rgba(155, 32, 47, 0.10)",
+            md: "0px 8px 15px rgba(155, 32, 47, 0.10)",
+            lg: "0px 8px 24px rgba(155, 32, 47, 0.14)",
+        },
+        neutral: {
+            xs: "0px 1px 3px rgba(25, 33, 61, 0.10)",
+            sm: "0px 2px 4px rgba(25, 33, 61, 0.08)",
+            md: "0px 8px 15px rgba(25, 33, 61, 0.10)",
+            lg: "0px 8px 24px rgba(25, 33, 61, 0.12)",
         }
-        const root = ReactDOM.createRoot(container);
-        root.render(
-            <React.StrictMode>
-                {element}
-            </React.StrictMode>
-        );
-    }
+    };
     ```
 
-#### **Nhiệm vụ 5: Tái cấu trúc (Refactor) Codebase để Sử dụng Adapter (TODO-012)**
+#### **Nhiệm vụ 2: Xây dựng Component `Card` (TODO-014)**
 
-* **Hành động:** Cập nhật các file hiện có (`main.tsx`, `button.tsx`, `icon.tsx`) để sử dụng lớp Adapter.
-* **Mô tả:** Đây là bước quan trọng nhất. Thay thế tất cả các import trực tiếp từ thư viện bên ngoài bằng import từ `src/adapter`.
-* **Ví dụ trong `button.tsx`:**
-    * **TRƯỚC ĐÂY:**
-        ```typescript
-        import React from 'react';
-        import styled, { css } from 'styled-components';
+* **Hành động:** Tạo file `src/ui/atom/card.tsx`.
+* **Mô tả:** Tạo một component `Card` có thể tái sử dụng, thay thế cho các `StyledShadowCard` lặp đi lặp lại.
+* **Yêu cầu:**
+    * Component `Card` phải nhận một prop `shadow` để áp dụng `box-shadow` tương ứng từ `theme`.
+    * Sử dụng lớp `adapter` cho các import từ `react` và `styled-components`.
+
+    ```typescript
+    // Ví dụ trong src/ui/atom/card.tsx
+    import { style } from '@/adapter';
+    import type { FC, Node } from '@/adapter';
+    import { theme } from '@/core/theme';
+
+    type ShadowKey = keyof typeof theme.shadow.primary;
+
+    interface Props {
+        children: Node;
+        variant?: 'primary' | 'secondary' | 'neutral';
+        shadow?: ShadowKey;
+    }
+    
+    const Element = style('div')<Props>`
+        background: ${theme.color.neutral[100]};
+        border-radius: ${theme.radius.large};
+        padding: ${theme.space[4]};
+        /* Logic để áp dụng shadow động */
+        box-shadow: ${({ variant = 'neutral', shadow = 'sm' }) => theme.shadow[variant][shadow]};
+    `;
+
+    export const Card: FC<Props> = ({ children, ...rest }) => (
+        <Element {...rest}>{children}</Element>
+    );
+    ```
+
+#### **Nhiệm vụ 3: Xây dựng Components Typography (TODO-015)**
+
+* **Hành động:** Tạo file `src/ui/atom/typography.tsx`.
+* **Mô tả:** Tạo các component `Title`, `Subtitle`, `Text` để thay thế các `span` được styled thủ công.
+* **Yêu cầu:**
+    * Mỗi component phải lấy style (font-size, font-weight, line-height) từ `theme.typography`.
+    * Tất cả phải là các component đơn giản, tuân thủ quy tắc đơn từ.
+
+#### **Nhiệm vụ 4: Xây dựng Trang `Showcase` (TODO-016)**
+
+* **Hành động:** Chỉnh sửa file `src/main.tsx` để xây dựng một trang hiển thị (showcase).
+* **Mô tả:** Thay vì render một trang trống, hãy tạo một trang showcase để trực quan hóa các `shadow` token bằng cách sử dụng component `Card` mới.
+* **Yêu cầu:**
+    * Tạo một component `App` trong `main.tsx`.
+    * Bên trong `App`, render một danh sách các `Card`, mỗi `Card` có một giá trị `shadow` khác nhau từ `theme`.
+    * Sử dụng các component Typography từ Nhiệm vụ 3 để thêm tiêu đề.
+    * **Ví dụ về cấu trúc JSX trong `App`:**
+        ```tsx
+        const App = () => (
+          <div>
+            <Title>Shadows Showcase</Title>
+            
+            <Subtitle>Primary</Subtitle>
+            <div style={{ display: 'flex', gap: '24px' }}>
+              <Card variant="primary" shadow="xs"><Text>XS</Text></Card>
+              <Card variant="primary" shadow="sm"><Text>SM</Text></Card>
+              <Card variant="primary" shadow="md"><Text>MD</Text></Card>
+              <Card variant="primary" shadow="lg"><Text>LG</Text></Card>
+            </div>
+
+            {/* Lặp lại cho secondary và neutral */}
+          </div>
+        );
         ```
-    * **BÂY GIỜ:**
-        ```typescript
-        import { FC, Node } from '../adapter/react'; // Giả sử đường dẫn tương đối
-        import { style, utility } from '../adapter/style';
-        ```
-* **Ví dụ trong `main.tsx`:**
-    * **TRƯỚC ĐÂY:**
-        ```typescript
-        import React from 'react';
-        import ReactDOM from 'react-dom/client';
-        import { ThemeProvider } from 'styled-components';
-        ```
-    * **BÂY GIỜ:**
-        ```typescript
-        import { provider as Provider } from './adapter/style';
-        import { render } from './adapter/dom';
-        import { App } from './App'; // Giả sử bạn tạo 1 App component
-        
-        render(<Provider theme={theme}><App /></Provider>, 'root');
-        ```
+
+#### **Nhiệm vụ 5: Dọn dẹp (TODO-017)**
+
+* **Hành động:** Xóa các file `Primary.tsx`, `Secondary.tsx`, `Neutral.tsx` và bất kỳ file tạm thời nào khác được tạo ra từ Figma.
+* **Mục tiêu:** Giữ cho codebase sạch sẽ, chỉ chứa các component và module đã được duyệt về mặt kiến trúc.
 
 ### **4. QUY TRÌNH BÁO CÁO VÀ BÀN GIAO**
 
 Sau khi hoàn thành **TẤT CẢ** các nhiệm vụ trên:
 
-1.  **Tạo file Báo cáo:** Tạo file `REPORT.md` và điền thông tin theo mẫu.
-2.  **Commit và Push code:** Sử dụng message commit có ý nghĩa.
+1.  **Cập nhật file Báo cáo:** Cập nhật file `REPORT.md` với trạng thái mới nhất.
+2.  **Commit và Push code:** Sử dụng message commit theo đúng chuẩn.
 
     ```bash
     git add .
-    git commit -m "refactor(arch): introduce adapter layer and decouple dependencies"
+    git commit -m "feat(core): complete core UI atoms and build showcase"
     git push
     ```
 
 ### **5. LỜI KẾT**
 
-Lớp Adapter là một sự đầu tư cho tương lai. Nó giúp hệ thống của chúng ta trở nên mạnh mẽ, linh hoạt và thực sự tuân thủ triết lý thiết kế mà chúng ta theo đuổi. Hãy thực hiện nhiệm vụ này một cách cẩn thận.
+Mục tiêu của chúng ta là xây dựng một hệ thống thiết kế "sống", nơi các token và component cốt lõi có thể được trực quan hóa và kiểm thử một cách tự động. Trang `Showcase` là bước đầu tiên để hiện thực hóa điều đó. Hãy tiếp tục duy trì kỷ luật và chất lượng cao.
 
 **Guardian.**
 ````
-
------
-
-### File 2: `REPORT.template.md` (Nội dung cho Coder sử dụng)
-
-```markdown
-# BÁO CÁO HOÀN THÀNH NHIỆM VỤ
-
-**Gửi:** Guardian
-**Từ:** Coder
-**Ngày:** [Điền ngày hoàn thành]
-**Commit Hash:** [Điền commit hash cuối cùng]
-
----
-
-### **1. TRẠNG THÁI CÁC NHIỆM VỤ**
-
--   [ ] **Nhiệm vụ 1:** Thiết lập Cấu trúc Thư mục `adapter`.
--   [ ] **Nhiệm vụ 2:** Triển khai Adapter cho `react`.
--   [ ] **Nhiệm vụ 3:** Triển khai Adapter cho `styled-components`.
--   [ ] **Nhiệm vụ 4:** Triển khai Adapter cho `react-dom/client`.
--   [ ] **Nhiệm vụ 5:** Tái cấu trúc (Refactor) Codebase để Sử dụng Adapter.
-
-### **2. GHI CHÚ THÊM (NẾU CÓ)**
-
-* *(Điền các ghi chú, khó khăn hoặc các điểm cần lưu ý trong quá trình thực hiện).*
-
-```
