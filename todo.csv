@@ -1,2 +1,6 @@
 ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
 1,UI,Shell,"Initialize the React project using a standard toolchain (e.g., Vite or Create React App). The project name must be 'languageui'. Ensure the initial file structure is clean and ready for modular development.",High,Done,Coder,2025-06-26,"Coder must ensure no multi-word identifiers are present in the initial boilerplate file names or component names they control. For example, if the tool creates 'App.js', it is acceptable, but any new component must follow the single-word rule."
+2,UI,Core,"Set up the single source of truth for design tokens in `theme.ts` (color, typography, shadow, etc.).",High,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-001, TODO-006"
+3,UI,Atom,"Build a centralized `Icon` component to dynamically render SVGs from a dedicated asset folder.",High,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-005"
+4,UI,Atom,"Implement a dynamic and reusable `Button` component based on variants, sizes, and theme tokens.",High,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-002"
+5,Project,Maintenance,"Clean up boilerplate code and files from the initial project setup.",Medium,Done,Coder,2025-06-27,"Completed as part of Atomic UI foundation. Ref: TODO-004, TODO-007"
