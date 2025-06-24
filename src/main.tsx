@@ -11,6 +11,8 @@ import { Title, Subtitle, Text } from '@/ui/atom/typography';
 import { Swatch } from '@/ui/atom/swatch';
 import type { FC, Node } from '@/adapter';
 import { Logo } from '@/ui/atom/logo';
+import { Button } from '@/ui/atom/button';
+import { Icon } from '@/ui/atom/icon';
 
 /**
  * @name Global
@@ -94,6 +96,40 @@ const App: FC = () => (
             <Card>
                 <Logo variant="full" mode="dark" height={40} />
             </Card>
+        </Section>
+
+        <Section title="Buttons">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+                {/* Primary Buttons */}
+                <Subtitle>Primary</Subtitle>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Button variant="primary" size="medium">Default</Button>
+                    <Button variant="primary" size="small">Default</Button>
+                    <Button variant="primary" size="medium" disabled>Disabled</Button>
+                    <Button variant="primary" size="medium" prefix={<Icon name="search" />}>{""}</Button>
+                    <Button variant="primary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+                </div>
+
+                {/* Secondary Buttons */}
+                <Subtitle>Secondary</Subtitle>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Button variant="secondary" size="medium">Default</Button>
+                    <Button variant="secondary" size="small">Default</Button>
+                    <Button variant="secondary" size="medium" disabled>Disabled</Button>
+                    <Button variant="secondary" size="medium" prefix={<Icon name="search" />}>{""}</Button>
+                    <Button variant="secondary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+                </div>
+
+                {/* Tertiary Buttons */}
+                <Subtitle>Tertiary</Subtitle>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Button variant="tertiary" size="medium">Default</Button>
+                    <Button variant="tertiary" size="small">Default</Button>
+                    <Button variant="tertiary" size="medium" disabled>Disabled</Button>
+                    <Button variant="tertiary" size="medium" prefix={<Icon name="search" />}>{""}</Button>
+                    <Button variant="tertiary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+                </div>
+            </div>
         </Section>
 
         <Palette title="Primary Colors" colors={theme.color.primary} />

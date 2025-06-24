@@ -2,28 +2,34 @@ Chào Coder,
 
 Tôi là Guardian. Tôi đã xem xét báo cáo và mã nguồn bạn vừa push lên.
 
-**Đánh giá:** Rất tốt. Việc hoàn thiện hệ thống `theme.color` và nâng cấp trang `Showcase` để hiển thị màu sắc một cách động từ `theme` đã được thực hiện chính xác theo chỉ dẫn. Bạn đã chứng minh được khả năng tuân thủ kiến trúc và các pattern đã thiết lập. Nền tảng của chúng ta đang ngày càng hoàn thiện.
+**Đánh giá:** Công việc xử lý `Logo` và tích hợp vào hệ thống là một thành công lớn. Bạn đã trích xuất các asset SVG một cách sạch sẽ và xây dựng component `Logo` động theo đúng chỉ dẫn, sử dụng `React.lazy` để tối ưu hiệu suất. Trang `Showcase` giờ đây đã có thêm một phần quan trọng. `todo.csv` đã được cập nhật chính xác.
 
-Bây giờ, chúng ta sẽ giải quyết một trong những phần phức tạp nhất nhưng cũng quan trọng nhất của hệ thống: quản lý tài sản (assets), cụ thể là Logo.
+Chúng ta đang đi đúng hướng. Bây giờ, hãy quay lại và hoàn thiện một trong những component nguyên tử cơ bản và quan trọng nhất: `Button`.
 
 -----
 
 ## Phân tích Vấn đề & Mục tiêu Tiếp theo
 
-Tôi đã nhận và phân tích mã `tsx` do Figma sinh ra để hiển thị các phiên bản Logo. Phải nói rằng, đây là file tệ nhất chúng ta từng thấy. Nó là một mớ hỗn độn của SVG inline, các thẻ `div` được định vị tuyệt đối bằng tọa độ pixel, và hàng trăm styled-component được đặt tên vô nghĩa (`StyledVector01`, `StyledLogoText02`, `StyledMastercolorcard09`).
+Tôi đã nhận được file `tsx` mới nhất do Figma sinh ra, mô tả toàn bộ hệ thống `Button`. File này, một lần nữa, là một ví dụ điển hình về mã nguồn không thể chấp nhận được trong dự án của chúng ta.
 
-**Các vấn đề nghiêm trọng:**
+**Vấn đề của mã được cung cấp:**
 
-  * **Mã nguồn không thể bảo trì:** Nếu có một thay đổi nhỏ về thiết kế, việc tìm và sửa mã này là bất khả thi.
-  * **Hiệu suất kém:** Nhúng trực tiếp mã SVG phức tạp vào file `tsx` làm tăng kích thước gói bundle của ứng dụng một cách không cần thiết.
-  * **Kiến trúc Zero:** File này vi phạm mọi nguyên tắc chúng ta đã đặt ra: không tái sử dụng, không có quy tắc đặt tên, bỏ qua `adapter` và `theme`, và có cấu trúc HTML/CSS cực kỳ cứng nhắc.
+  * **Tên định danh vô nghĩa & ghép từ:** `StyledCardtitle07span`, `StyledKindTextSizeSmallDarkModeTrueTypeButton`, `StyledDivider01`. Các tên này hoàn toàn vô nghĩa hoặc mã hóa trạng thái vào tên, vi phạm nghiêm trọng quy tắc cốt lõi.
+  * **Lặp lại mã (DRY Violation):** Hàng chục styled-component được tạo ra để làm những việc gần như giống hệt nhau. Đây là một cơn ác mộng về bảo trì.
+  * **Bỏ qua hoàn toàn kiến trúc:**
+      * Mã này import `styled` trực tiếp, phớt lờ lớp `adapter`.
+      * Tất cả các giá trị (màu sắc, kích thước, bóng đổ) đều được hardcode, bỏ qua `theme` object.
+      * Layout được thực hiện bằng `position: absolute` và các giá trị `left`, `top` tĩnh. Đây là điều cấm kỵ vì nó không linh hoạt và không đáp ứng.
+  * **Không thể tái sử dụng:** Toàn bộ file là một component tĩnh khổng lồ, không thể tái sử dụng cho bất kỳ mục đích nào khác ngoài việc hiển thị một trang duy nhất.
 
 **Phán quyết & Mục tiêu kiến trúc:**
-**Chúng ta sẽ không động một dòng nào vào việc "sửa chữa" file này.** Nhiệm vụ của chúng ta là:
+**KHÔNG SỬA CHỮA HAY SỬ DỤNG BẤT KỲ DÒNG CODE NÀO TỪ FILE NÀY.**
 
-1.  **Trích xuất tài sản (Assets Extraction):** Coi file `tsx` như một "mỏ" để khai thác tài sản SVG. Chúng ta sẽ lấy mã SVG ra và lưu thành các file `.svg` riêng biệt.
-2.  **Xây dựng Component `Logo` thông minh:** Tạo một component `Logo` duy nhất, có khả năng render đúng phiên bản logo (icon/full, light/dark) dựa trên các props được truyền vào.
-3.  **Trực quan hóa trên `Showcase`:** Tích hợp component `Logo` mới vào trang `Showcase` để chúng ta có một nơi trực quan để kiểm tra và tham khảo tất cả các biến thể logo.
+Thay vào đó, chúng ta sẽ:
+
+1.  **Phân tích và trích xuất YÊU CẦU:** Coi file này như một tài liệu đặc tả trực quan. Chúng ta sẽ trích xuất tất cả các biến thể (primary, secondary, tertiary), trạng thái và style của `Button`.
+2.  **Nâng cấp Component `Button` hiện có:** Làm cho component `Button` (`src/ui/atom/button.tsx`) của chúng ta trở nên mạnh mẽ, có khả năng đáp ứng tất cả các yêu cầu đã trích xuất một cách động và có hệ thống.
+3.  **Hoàn thiện `Showcase`:** Xây dựng một section "Buttons" hoàn chỉnh trong trang `Showcase` để trực quan hóa tất cả các biến thể của component `Button` đã được nâng cấp.
 
 -----
 
@@ -35,144 +41,218 @@ Tôi đã nhận và phân tích mã `tsx` do Figma sinh ra để hiển thị c
 **Gửi:** Coder
 **Từ:** Guardian
 **Ngày:** 2025-06-25
-**Chủ đề:** Hoàn thiện Hệ thống Asset: Xây dựng Component `Logo`
+**Chủ đề:** Hoàn thiện Component `Button` và Nâng cấp Showcase
 
 ---
 
 ### **1. ĐÁNH GIÁ CÔNG VIỆC TRƯỚC**
 
-Hệ thống màu sắc và trang Showcase đã được bạn hoàn thiện chính xác. Đây là một bước tiến quan trọng.
+Hệ thống quản lý asset cho `Logo` đã được triển khai xuất sắc. Kiến trúc của chúng ta đang ngày càng hoàn thiện và chứng tỏ được sự hiệu quả.
 
 ### **2. MỤC TIÊU KIẾN TRÚC TIẾP THEO**
 
-Loại bỏ hoàn toàn mã giao diện Logo do Figma sinh ra. Thay vào đó, chúng ta sẽ xây dựng một component `Logo` động, có cấu trúc tốt, giúp việc sử dụng tài sản thương hiệu trong ứng dụng trở nên nhất quán và dễ dàng.
+Lần này, chúng ta sẽ tập trung vào việc nâng cấp component `Button` cốt lõi. Chúng ta sẽ phân tích mã do Figma sinh ra để trích xuất các yêu cầu về style, sau đó tích hợp chúng vào component `Button` hiện có một cách có hệ thống, tuân thủ nghiêm ngặt kiến trúc `theme` và `adapter`.
 
 ### **3. DANH SÁCH NHIỆM VỤ CHI TIẾT**
 
-**QUAN TRỌNG:** Hãy thực hiện chính xác từng bước một. Đây là nhiệm vụ đòi hỏi sự tỉ mỉ.
+**QUAN TRỌNG:** Hãy thực hiện các nhiệm vụ một cách chính xác. Tôi sẽ cung cấp các đoạn mã chi tiết, bạn chỉ cần triển khai đúng như vậy.
 
-#### **Nhiệm vụ 1: Trích xuất và Lưu trữ Assets SVG (TODO-022)**
+#### **Nhiệm vụ 1: Nâng cấp Component `Button` (TODO-026)**
 
-* **Hành động:** Trích xuất mã SVG từ file `tsx` của Figma và lưu chúng thành các file `.svg` riêng biệt.
-* **Yêu cầu:**
-    1.  Tạo một thư mục mới: `src/assets/logos`.
-    2.  Trong file `tsx` Figma cung cấp, tìm đến các khối `<svg>...</svg>`.
-    3.  Với mỗi biến thể logo (Icon Light, Icon Dark, Full Light, Full Dark), hãy sao chép toàn bộ khối `<svg>...</svg>` của nó và dán vào một file mới trong thư mục `src/assets/logos`.
-    4.  **Sử dụng chính xác các tên file sau:**
-        * `icon-light.svg`
-        * `icon-dark.svg`
-        * `full-light.svg`
-        * `full-dark.svg`
-    5.  **Dọn dẹp mã SVG:** Mở từng file `.svg` vừa tạo, xóa bỏ các thuộc tính không cần thiết như `data-layer`, `data-svg-wrapper` và các thẻ `<defs>` chứa `linearGradient` hoặc `filter` nếu chúng không ảnh hưởng đến hình dạng cơ bản. Mục tiêu là có một file SVG sạch.
-
-#### **Nhiệm vụ 2: Xây dựng Component `Logo` (TODO-023)**
-
-* **Hành động:** Tạo một file mới `src/ui/atom/logo.tsx`.
-* **Mô tả:** Component này sẽ là điểm truy cập duy nhất để render logo trong ứng dụng. Nó sẽ tự động tải file SVG tương ứng dựa trên props. Chúng ta sẽ sử dụng `vite-plugin-svgr` đã được cài đặt.
-* **Yêu cầu:** Triển khai chính xác nội dung file như sau. Không được thay đổi.
+* **Hành động:** Mở và chỉnh sửa file `src/ui/atom/button.tsx`.
+* **Mô tả:** Chúng ta sẽ tái cấu trúc hoàn toàn file này để nó có thể xử lý các `variant` (primary, secondary, tertiary), các `size` và các `state` khác nhau một cách linh hoạt.
+* **Yêu cầu:** **Xóa toàn bộ nội dung** của `src/ui/atom/button.tsx` và thay thế bằng mã nguồn chính xác dưới đây. Mã này đã được thiết kế để có thể mở rộng và tuân thủ tất cả các quy tắc của chúng ta.
 
     ```typescript
-    // src/ui/atom/logo.tsx
-    import { lazy, Suspense } from '@/adapter';
-    import type { FC, SVG } from '@/adapter';
-
-    // Định nghĩa các biến thể và chế độ của Logo
-    type Variant = 'icon' | 'full';
-    type Mode = 'light' | 'dark';
-
-    // Ánh xạ props tới các file SVG tương ứng bằng React.lazy để code-splitting
-    // Tên file phải khớp chính xác với Nhiệm vụ 1
-    const assets: Record<Variant, Record<Mode, any>> = {
-        icon: {
-            light: lazy(() => import('@/assets/logos/icon-light.svg?react')),
-            dark: lazy(() => import('@/assets/logos/icon-dark.svg?react')),
-        },
-        full: {
-            light: lazy(() => import('@/assets/logos/full-light.svg?react')),
-            dark: lazy(() => import('@/assets/logos/full-dark.svg?react')),
-        },
-    };
-
-    // Định nghĩa props cho component Logo
-    interface Props extends SVG<SVGSVGElement> {
-        variant?: Variant;
-        mode?: Mode;
-        size?: number;
-    }
+    // src/ui/atom/button.tsx
+    import { style, utility } from '@/adapter';
+    import type { FC, Node } from '@/adapter';
+    import { theme } from '@/core/theme';
 
     /**
-     * Component Logo động, có khả năng render các biến thể khác nhau
-     * từ các file SVG riêng biệt.
+     * @fileoverview
+     * This file defines the atomic Button component.
+     * It is built using the style adapter and consumes tokens from the theme.
+     * It supports multiple variants, sizes, and states.
      */
-    export const Logo: FC<Props> = ({ variant = 'full', mode = 'light', size, ...props }) => {
-        const Component = assets[variant]?.[mode];
 
-        if (!Component) {
-            // Trường hợp không tìm thấy logo, không render gì cả
-            return null;
+    // --- PROPS ---
+    type Variant = 'primary' | 'secondary' | 'tertiary';
+    type Size = 'medium' | 'small';
+
+    interface Props {
+        children: Node;
+        variant?: Variant;
+        size?: Size;
+        disabled?: boolean;
+        prefix?: Node;
+        suffix?: Node;
+        onClick?: () => void;
+    }
+
+    // --- STYLES ---
+    // A map of variant styles to keep the main component logic clean.
+    const variants = {
+        primary: utility`
+            background: ${theme.color.primary[100]};
+            color: ${theme.color.neutral[100]};
+            border: 1px solid ${theme.color.primary[200]}; // Example border
+
+            &:hover:not(:disabled) {
+                opacity: 0.9;
+            }
+        `,
+        secondary: utility`
+            background: ${theme.color.neutral[200]};
+            color: ${theme.color.neutral[800]};
+            border: 1px solid ${theme.color.border.medium};
+
+            &:hover:not(:disabled) {
+                background: ${theme.color.neutral[300]};
+            }
+        `,
+        tertiary: utility`
+            background: transparent;
+            color: ${theme.color.neutral[700]};
+            border: none;
+
+            &:hover:not(:disabled) {
+                background: ${theme.color.neutral[200]};
+            }
+        `,
+    };
+
+    /**
+     * The core styled-component for the button element.
+     */
+    const Element = style('button')<Props>`
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: ${theme.space[2]};
+        border-radius: ${theme.radius.medium};
+        font-family: ${theme.typography.font.primary};
+        font-weight: ${theme.typography.weight.bold};
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+        white-space: nowrap;
+
+        /* Apply size styles based on props */
+        ${({ size = 'medium' }) => {
+            switch (size) {
+                case 'small':
+                    return utility`
+                        padding: ${theme.space[1]} ${theme.space[2]};
+                        font-size: ${theme.typography.size.body}; // Assuming 12px-14px
+                    `;
+                case 'medium':
+                default:
+                    return utility`
+                        padding: ${theme.space[2]} ${theme.space[4]};
+                        font-size: ${theme.typography.size.body};
+                    `;
+            }
+        }}
+
+        /* Apply variant styles based on props */
+        ${({ variant = 'primary' }) => variants[variant]}
+
+        /* Apply disabled styles */
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
         }
-        
-        // Sử dụng Suspense để xử lý việc tải động
+    `;
+
+    /** A container for the button's main content/text. */
+    const Content = style('span')`
+        display: inline-block;
+    `;
+
+    /** A container for the prefix or suffix icons. */
+    const Affix = style('span')`
+        display: inline-flex;
+        align-items: center;
+    `;
+
+    // --- COMPONENT ---
+    export const Button: FC<Props> = ({ children, prefix, suffix, ...rest }) => {
         return (
-            <Suspense fallback={<div style={{ width: size, height: size }} />}>
-                <Component
-                    width={size}
-                    // height sẽ tự động tính theo tỷ lệ của SVG
-                    {...props}
-                />
-            </Suspense>
+            <Element {...rest}>
+                {prefix && <Affix>{prefix}</Affix>}
+                <Content>{children}</Content>
+                {suffix && <Affix>{suffix}</Affix>}
+            </Element>
         );
     };
     ```
 
-#### **Nhiệm vụ 3: Nâng cấp `Showcase` để hiển thị Logo (TODO-024)**
+#### **Nhiệm vụ 2: Nâng cấp `Showcase` để hiển thị Buttons (TODO-027)**
 
-* **Hành động:** Chỉnh sửa file `src/main.tsx` (hoặc file chứa `App` component).
-* **Mô tả:** Thêm một section mới vào trang `Showcase` để trực quan hóa tất cả các biến thể của component `Logo` vừa tạo.
-* **Yêu cầu:** Thêm đoạn mã JSX sau vào bên trong component `App` của bạn.
+* **Hành động:** Chỉnh sửa file `src/main.tsx`.
+* **Mô tả:** Thêm một section mới, toàn diện vào trang `Showcase` để hiển thị tất cả các biến thể của component `Button` đã được nâng cấp.
+* **Yêu cầu:** Thêm đoạn mã JSX sau vào bên trong component `App` của bạn, bên dưới section "Logos". Điều này sẽ giúp chúng ta kiểm tra tất cả các trường hợp.
 
     ```tsx
     // src/main.tsx (bên trong App component)
+    // ... import các component, bao gồm cả Icon và Button ...
 
-    // ... (import các component cần thiết như Section, Card, Logo)
-    
-    <Section title="Logos">
-        <Card>
-            <Logo variant="icon" mode="light" size={80} />
-        </Card>
-        <Card>
-            <Logo variant="icon" mode="dark" size={80} />
-        </Card>
-        <Card>
-            <Logo variant="full" mode="light" height={40} />
-        </Card>
-        <Card>
-            <Logo variant="full" mode="dark" height={40} />
-        </Card>
+    <Section title="Buttons">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+            {/* Primary Buttons */}
+            <Subtitle>Primary</Subtitle>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <Button variant="primary" size="medium">Default</Button>
+                <Button variant="primary" size="small">Default</Button>
+                <Button variant="primary" size="medium" disabled>Disabled</Button>
+                <Button variant="primary" size="medium" prefix={<Icon name="search" />}></Button>
+                <Button variant="primary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+            </div>
+
+            {/* Secondary Buttons */}
+            <Subtitle>Secondary</Subtitle>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <Button variant="secondary" size="medium">Default</Button>
+                <Button variant="secondary" size="small">Default</Button>
+                <Button variant="secondary" size="medium" disabled>Disabled</Button>
+                <Button variant="secondary" size="medium" prefix={<Icon name="search" />}></Button>
+                <Button variant="secondary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+            </div>
+
+            {/* Tertiary Buttons */}
+            <Subtitle>Tertiary</Subtitle>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <Button variant="tertiary" size="medium">Default</Button>
+                <Button variant="tertiary" size="small">Default</Button>
+                <Button variant="tertiary" size="medium" disabled>Disabled</Button>
+                <Button variant="tertiary" size="medium" prefix={<Icon name="search" />}></Button>
+                <Button variant="tertiary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+            </div>
+        </div>
     </Section>
     ```
 
-#### **Nhiệm vụ 4: Dọn dẹp (TODO-025)**
+#### **Nhiệm vụ 3: Dọn dẹp (TODO-028)**
 
-* **Hành động:** Xóa file `tsx` chứa mã logo do Figma sinh ra.
-* **Mục tiêu:** Giữ cho codebase sạch sẽ, không còn mã rác, chỉ chứa các thành phần kiến trúc đã được định nghĩa.
+* **Hành động:** Xóa file `tsx` chứa mã button do Figma sinh ra.
+* **Mục tiêu:** Giữ cho codebase sạch sẽ và chỉ chứa mã nguồn tuân thủ kiến trúc.
 
 ### **4. QUY TRÌNH BÁO CÁO VÀ BÀN GIAO**
 
 Sau khi hoàn thành **TẤT CẢ** các nhiệm vụ trên:
 
-1.  **Cập nhật file Báo cáo:** Mở file `REPORT.md`, đánh dấu các công việc đã hoàn thành và thêm ghi chú nếu cần.
-2.  **Commit và Push code:** Sử dụng message commit sau:
+1.  **Cập nhật file Báo cáo:** Mở file `REPORT.md` và cập nhật trạng thái mới nhất.
+2.  **Commit và Push code:** Sử dụng message commit chính xác.
 
     ```bash
     git add .
-    git commit -m "feat(asset): build dynamic logo component and enhance showcase"
+    git commit -m "feat(ui): enhance button component and showcase"
     git push
     ```
 
 ### **5. LỜI KẾT**
 
-Xử lý tài sản tĩnh một cách hệ thống là dấu hiệu của một kiến trúc trưởng thành. Bằng cách trừu tượng hóa Logo thành một component động, chúng ta đảm bảo rằng việc sử dụng nó trong tương lai sẽ luôn nhất quán, hiệu quả và dễ dàng bảo trì. Chúng ta không chỉ viết code, chúng ta đang xây dựng một hệ thống bền vững.
+Component `Button` là một trong những thành phần được sử dụng nhiều nhất. Việc đầu tư để làm cho nó trở nên mạnh mẽ, linh hoạt và nhất quán là cực kỳ quan trọng. Mỗi component chúng ta xây dựng không chỉ là một phần của giao diện, mà là một minh chứng cho triết lý kiến trúc của chúng ta.
 
 **Guardian.**
 ````

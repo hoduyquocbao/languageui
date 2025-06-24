@@ -2,62 +2,62 @@ import { style } from '@/adapter';
 import type { FC, Node } from '@/adapter';
 import { theme } from '@/core/theme';
 
+const utility = style.utility;
+
 /**
  * @fileoverview
- * This file defines the atomic Button component.
- * It is built using the style adapter and consumes tokens from the theme.
+ * Đây là component Button nguyên tử, xây dựng bằng style adapter và sử dụng token từ theme.
+ * Hỗ trợ nhiều biến thể (variant), kích thước (size) và trạng thái (state).
  */
 
 // --- PROPS ---
-/** The visual style of the button. */
-type Variant = 'primary' | 'secondary';
-/** The size of the button, affecting padding and font size. */
+type Variant = 'primary' | 'secondary' | 'tertiary';
 type Size = 'medium' | 'small';
-/** The state of the button, e.g., disabled. */
-type State = 'disabled';
 
-/**
- * Defines the properties for the Button component.
- * All prop names are single words.
- */
 interface Props {
     children: Node;
     variant?: Variant;
     size?: Size;
-    state?: State;
+    disabled?: boolean;
     prefix?: Node;
     suffix?: Node;
     onClick?: () => void;
 }
 
 // --- STYLES ---
-// Defines the CSS for different button variants.
+// Map các style cho từng variant để tách logic style khỏi component chính.
 const variants = {
-    primary: style.utility`
+    primary: utility`
         background: ${theme.color.primary[100]};
         color: ${theme.color.neutral[100]};
-        border: 1px solid ${theme.color.border.medium};
+        border: 1px solid ${theme.color.primary[200]};
 
-        &:hover {
+        &:hover:not(:disabled) {
             opacity: 0.9;
         }
     `,
-    secondary: style.utility`
-        background: ${theme.color.neutral[100]};
+    secondary: utility`
+        background: ${theme.color.neutral[200]};
         color: ${theme.color.neutral[800]};
         border: 1px solid ${theme.color.border.medium};
 
-        &:hover {
+        &:hover:not(:disabled) {
+            background: ${theme.color.neutral[300]};
+        }
+    `,
+    tertiary: utility`
+        background: transparent;
+        color: ${theme.color.neutral[700]};
+        border: none;
+
+        &:hover:not(:disabled) {
             background: ${theme.color.neutral[200]};
-            color: ${theme.color.neutral[100]};
         }
     `,
 };
 
 /**
- * The core styled-component for the button element.
- * It dynamically applies styles based on props.
- * Created using the `style` adapter facade.
+ * Component styled chính cho button.
  */
 const Element = style('button')<Props>`
     display: inline-flex;
@@ -69,52 +69,50 @@ const Element = style('button')<Props>`
     font-weight: ${theme.typography.weight.bold};
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    white-space: nowrap;
 
-    /* Apply size styles based on props */
+    /* Style theo size */
     ${({ size = 'medium' }) => {
         switch (size) {
             case 'small':
-                return style.utility`
+                return utility`
                     padding: ${theme.space[1]} ${theme.space[2]};
                     font-size: ${theme.typography.size.body};
                 `;
             case 'medium':
             default:
-                return style.utility`
+                return utility`
                     padding: ${theme.space[2]} ${theme.space[4]};
                     font-size: ${theme.typography.size.body};
                 `;
         }
     }}
 
-    /* Apply variant styles based on props */
+    /* Style theo variant */
     ${({ variant = 'primary' }) => variants[variant]}
 
+    /* Style disabled */
     &:disabled {
         cursor: not-allowed;
         opacity: 0.5;
     }
 `;
 
-/** A container for the button's main content/text. */
+/** Container cho nội dung chính của button */
 const Content = style('span')`
     display: inline-block;
 `;
 
-/** A container for the prefix or suffix icons. */
+/** Container cho prefix/suffix icon */
 const Affix = style('span')`
     display: inline-flex;
     align-items: center;
 `;
 
 // --- COMPONENT ---
-/**
- * The main Button component.
- * It assembles the core element with optional prefix and suffix nodes.
- */
-export const Button: FC<Props> = ({ children, prefix, suffix, state, ...rest }) => {
+export const Button: FC<Props> = ({ children, prefix, suffix, ...rest }) => {
     return (
-        <Element disabled={state === 'disabled'} {...rest}>
+        <Element {...rest}>
             {prefix && <Affix>{prefix}</Affix>}
             <Content>{children}</Content>
             {suffix && <Affix>{suffix}</Affix>}
