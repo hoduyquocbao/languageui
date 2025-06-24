@@ -10,6 +10,7 @@ import { Card } from '@/ui/atom/card';
 import { Title, Subtitle, Text } from '@/ui/atom/typography';
 import { Swatch } from '@/ui/atom/swatch';
 import type { FC, Node } from '@/adapter';
+import { Logo } from '@/ui/atom/logo';
 
 /**
  * @name Global
@@ -79,6 +80,21 @@ const Palette: FC<{ title: string; colors: Record<string, string> }> = ({ title,
 const App: FC = () => (
     <main>
         <Title>LanguageUI Showcase</Title>
+
+        <Section title="Logos">
+            <Card>
+                <Logo variant="icon" mode="light" size={80} />
+            </Card>
+            <Card>
+                <Logo variant="icon" mode="dark" size={80} />
+            </Card>
+            <Card>
+                <Logo variant="full" mode="light" height={40} />
+            </Card>
+            <Card>
+                <Logo variant="full" mode="dark" height={40} />
+            </Card>
+        </Section>
 
         <Palette title="Primary Colors" colors={theme.color.primary} />
         <Palette title="Secondary Colors" colors={theme.color.secondary} />

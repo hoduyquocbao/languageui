@@ -18,3 +18,7 @@ ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
 19,UI,Atom,"Build a reusable Swatch component to visually represent a color and its metadata.",High,Done,Coder,2025-06-25,"Ref: TODO-019"
 20,UI,Showcase,"Upgrade the Showcase page to dynamically render the entire color palette from the theme.",High,Done,Coder,2025-06-25,"Ref: TODO-020"
 21,Project,Maintenance,"Scan the codebase and remove any auto-generated Figma files to maintain architectural integrity.",Medium,Done,Coder,2025-06-25,"Ref: TODO-021"
+22,UI,Asset,"Extract SVG logo assets from Figma-exported TSX and save as clean .svg files in src/assets/logos.",High,Done,Coder,2025-06-25,"Ref: TODO-022"
+23,UI,Atom,"Build a dynamic Logo component that loads the correct SVG variant based on props.",High,Done,Coder,2025-06-25,"Ref: TODO-023"
+24,UI,Showcase,"Upgrade the Showcase page to display all logo variants using the new Logo component.",High,Done,Coder,2025-06-25,"Ref: TODO-024"
+25,Project,Maintenance,"Remove the old Figma-exported logo TSX file from the codebase.",Medium,Done,Coder,2025-06-25,"Ref: TODO-025"

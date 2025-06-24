@@ -18,7 +18,7 @@ export const Text = style('p')`
     font-family: ${theme.typography.font.primary};
     font-size: ${theme.typography.size.body};
     font-weight: ${theme.typography.weight.regular};
-    color: ${theme.color.neutral[200]};
+    color: ${theme.color.neutral[800]};
     margin: 0;
 `;
 
