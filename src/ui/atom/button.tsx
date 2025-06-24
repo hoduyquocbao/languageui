@@ -18,7 +18,7 @@ interface Props {
 }
 
 // --- STYLES ---
-const sizeStyles = {
+const sizes = {
     medium: css`
         padding: ${theme.space[3]} ${theme.space[4]};
         font-size: ${theme.typography.size.medium};
@@ -29,7 +29,7 @@ const sizeStyles = {
     `,
 };
 
-const variantStyles = {
+const variants = {
     primary: css`
         background: ${theme.color.primary[100]};
         color: ${theme.color.neutral[100]};
@@ -62,8 +62,8 @@ const Element = styled.button<Omit<Props, 'children'>>`
     cursor: pointer;
     transition: all 0.2s ease-in-out;
 
-    ${({ size = 'medium' }) => sizeStyles[size]}
-    ${({ variant = 'primary' }) => variantStyles[variant]}
+    ${({ size = 'medium' }) => sizes[size]}
+    ${({ variant = 'primary' }) => variants[variant]}
 
     &:disabled {
         cursor: not-allowed;

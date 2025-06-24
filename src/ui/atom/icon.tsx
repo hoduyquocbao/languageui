@@ -5,23 +5,23 @@ const icons = {
     arrow: lazy(() => import('../../assets/icons/arrow.svg?react')),
 };
 
-export type IconName = keyof typeof icons;
+export type Kind = keyof typeof icons;
 
 interface Props extends React.SVGProps<SVGSVGElement> {
-    name: IconName;
+    name: Kind;
     size?: number;
 }
 
 export const Icon: React.FC<Props> = ({ name, size = 24, ...props }) => {
-    const SvgComponent = icons[name];
+    const Element = icons[name];
 
-    if (!SvgComponent) {
+    if (!Element) {
         return null;
     }
 
     return (
         <Suspense fallback={<div style={{ width: size, height: size }} />}>
-            <SvgComponent width={size} height={size} {...props} />
+            <Element width={size} height={size} {...props} />
         </Suspense>
     );
 }; 

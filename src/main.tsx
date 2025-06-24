@@ -5,7 +5,7 @@ import { theme } from './core/theme'
 import { Button } from './ui/atom/button'
 import { Icon } from './ui/atom/icon'
 
-const GlobalStyle = createGlobalStyle`
+const Style = createGlobalStyle`
   body {
     font-family: ${({ theme }) => theme.typography.font.primary};
     margin: 0;
@@ -17,7 +17,7 @@ const GlobalStyle = createGlobalStyle`
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <GlobalStyle />
+      <Style />
       <h1>Component Showcase</h1>
       
       <h2>Buttons</h2>
