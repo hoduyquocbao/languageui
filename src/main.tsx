@@ -173,6 +173,6 @@ const Root = dom.root(document.getElementById('root')!);
 Root.render(
     <style.provider theme={theme}>
         <Global />
-        <App />
+    <App />
     </style.provider>
 );

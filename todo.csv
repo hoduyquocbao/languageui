@@ -22,3 +22,6 @@ ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
 23,UI,Atom,"Build a dynamic Logo component that loads the correct SVG variant based on props.",High,Done,Coder,2025-06-25,"Ref: TODO-023"
 24,UI,Showcase,"Upgrade the Showcase page to display all logo variants using the new Logo component.",High,Done,Coder,2025-06-25,"Ref: TODO-024"
 25,Project,Maintenance,"Remove the old Figma-exported logo TSX file from the codebase.",Medium,Done,Coder,2025-06-25,"Ref: TODO-025"
+26,UI,Atom,"Refactor Button component to support all variants, sizes, and states using only theme tokens and adapter. Remove all hardcoded values.",High,Done,Coder,2025-06-25,"Button is now fully dynamic, all styles via theme/adapter, no hardcode, full architectural compliance. Ref: 24376eb"
+27,UI,Showcase,"Add comprehensive 'Buttons' section to Showcase, visualizing all Button variants and states.",High,Done,Coder,2025-06-25,"Showcase now provides a live style guide for Button, covering all variants/states. Ref: 24376eb"
+28,Project,Maintenance,"Remove any Figma-generated TSX button file from the codebase.",Medium,Done,Coder,2025-06-25,"No Figma TSX button file remains; codebase is clean. Ref: 24376eb"
