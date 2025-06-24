@@ -1,0 +1,2 @@
+ID,Context,Module,Task,Priority,Status,Assignee,Due,Notes
+1,UI,Shell,"Initialize the React project using a standard toolchain (e.g., Vite or Create React App). The project name must be 'languageui'. Ensure the initial file structure is clean and ready for modular development.",High,Open,Coder,2025-06-26,"Coder must ensure no multi-word identifiers are present in the initial boilerplate file names or component names they control. For example, if the tool creates 'App.js', it is acceptable, but any new component must follow the single-word rule."

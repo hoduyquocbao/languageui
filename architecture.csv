@@ -1,0 +1,2 @@
+Context,Module,Type,Name,Responsibility,Dependency,PerformanceNote,NamingRationale
+UI,Shell,Component,App,The root component that orchestrates the entire application layout and state.,-,"Must handle initial load efficiently, lazy load modules.","'App' is the universally understood single-word term for the primary application container."
