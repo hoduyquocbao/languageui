@@ -1,30 +1,69 @@
-# LanguageUI Project
+# React + TypeScript + Vite
 
-## 1. Tổng quan
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Dự án này tuân thủ các nguyên tắc kiến trúc nghiêm ngặt dưới sự giám sát của Guardian (Kiến trúc sư hệ thống). Mục tiêu là xây dựng một giao diện người dùng có cấu trúc thanh lịch, hiệu suất cao và dễ bảo trì.
+Currently, two official plugins are available:
 
-## 2. Vai trò
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
--   **Guardian**: Chịu trách nhiệm về kiến trúc tổng thể, các quyết định thiết kế, quy tắc đặt tên, phân chia module và quản lý các file PKB (`architecture.csv`, `memories.csv`, `todo.csv`).
--   **Coder**: Chịu trách nhiệm triển khai (implement) mã nguồn tuân thủ nghiêm ngặt theo các chỉ dẫn và kiến trúc do Guardian đề ra.
+## Expanding the ESLint configuration
 
-## 3. Quy trình Giao tiếp qua Git
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-Giao tiếp giữa Guardian và Coder được thực hiện **DUY NHẤT** thông qua các commit trong Git.
+```js
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### 3.1. Luồng công việc
+      // Remove tseslint.configs.recommended and replace with this
+      ...tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      ...tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      ...tseslint.configs.stylisticTypeChecked,
 
-1.  **Guardian Giao việc**: Guardian sẽ tạo hoặc cập nhật các file PKB (`.csv`) để định nghĩa công việc và kiến trúc. Commit sẽ có định dạng: `Guardian: SET TASK <Mô tả ngắn>`.
-2.  **Coder Nhận việc**: Coder thực hiện `git pull` để nhận các nhiệm vụ mới từ `todo.csv`.
-3.  **Coder Thực thi**: Coder viết code để hoàn thành nhiệm vụ được mô tả trong `todo.csv`.
-4.  **Coder Báo cáo**: Sau khi hoàn thành, Coder cập nhật cột `Status` trong `todo.csv` thành `Done` và commit toàn bộ thay đổi (cả code và file `todo.csv` đã cập nhật) với định dạng: `Coder: IMPL <Mô tả ngắn về việc đã làm>`.
-5.  **Guardian Đánh giá**: Guardian sẽ review commit của Coder. Nếu có phản hồi, Guardian sẽ tạo một task mới trong `todo.csv` và lặp lại chu trình.
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
 
-### 4. Nguyên tắc Bắt buộc
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-1.  **Kiến trúc PKB-first**: Luôn đọc các file `.csv` trước khi code. `todo.csv` là nguồn công việc duy nhất. `architecture.csv` là bản thiết kế phải tuân theo. `memories.csv` là nhật ký quyết định cần tham khảo.
-2.  **Đặt tên Đơn từ**: Toàn bộ định danh (biến, hàm, component, file, folder...) phải là **MỘT TỪ TIẾNG ANH**. Quy tắc này áp dụng cho cả cấu trúc thư mục. Vi phạm sẽ bị từ chối trong quá trình review. Tham khảo các kỹ thuật phân rã trong `README.md` gốc để tuân thủ.
-3.  **Cấu trúc Thư mục Phản ánh Kiến trúc**: Cấu trúc thư mục phải tuân theo sự phân chia `Module` và `Context` đã được định nghĩa trong `architecture.csv`.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-**NHIỆM VỤ HIỆN TẠI CỦA BẠN (CODER): ĐỌC FILE `todo.csv` VÀ THỰC HIỆN.**
+export default tseslint.config([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
