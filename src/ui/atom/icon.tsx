@@ -3,10 +3,18 @@ import type { FC, SVG } from '@/adapter';
 
 /**
  * Dynamically loads and renders SVG icons.
- * The `icons` object maps a single-word `Kind` to a dynamically imported SVG.
+ * The `icons` object maps a single-word `name` to a dynamically imported SVG.
  * This uses React.lazy to ensure icons are only loaded when needed.
  */
 const icons = {
+    file: lazy(() => import('@/assets/icons/file.svg?react')),
+    pdf: lazy(() => import('@/assets/icons/pdf.svg?react')),
+    zip: lazy(() => import('@/assets/icons/zip.svg?react')),
+    code: lazy(() => import('@/assets/icons/code.svg?react')),
+    ppt: lazy(() => import('@/assets/icons/ppt.svg?react')),
+    csv: lazy(() => import('@/assets/icons/csv.svg?react')),
+    image: lazy(() => import('@/assets/icons/image.svg?react')),
+    shape: lazy(() => import('@/assets/icons/shape.svg?react')),
     search: lazy(() => import('@/assets/icons/search.svg?react')),
     arrow: lazy(() => import('@/assets/icons/arrow.svg?react')),
 };
@@ -27,15 +35,15 @@ interface Props extends SVG<SVGSVGElement> {
  * wrapped in a `Suspense` component to handle the dynamic loading.
  */
 export const Icon: FC<Props> = ({ name, size = 24, ...props }) => {
-    const Element = icons[name];
+    const Component = icons[name];
 
-    if (!Element) {
+    if (!Component) {
         return null;
     }
 
     return (
         <Suspense fallback={<div style={{ width: size, height: size }} />}>
-            <Element width={size} height={size} {...props} />
+            <Component width={size} height={size} {...props} />
         </Suspense>
     );
-}; 
+};
