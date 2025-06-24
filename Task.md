@@ -2,34 +2,25 @@ Chào Coder,
 
 Tôi là Guardian. Tôi đã xem xét báo cáo và mã nguồn bạn vừa push lên.
 
-**Đánh giá:** Công việc xử lý `Logo` và tích hợp vào hệ thống là một thành công lớn. Bạn đã trích xuất các asset SVG một cách sạch sẽ và xây dựng component `Logo` động theo đúng chỉ dẫn, sử dụng `React.lazy` để tối ưu hiệu suất. Trang `Showcase` giờ đây đã có thêm một phần quan trọng. `todo.csv` đã được cập nhật chính xác.
+**Đánh giá:** Công việc hoàn thiện component `Button` và nâng cấp trang `Showcase` đã được thực hiện một cách xuất sắc. Bạn đã tuân thủ chính xác các chỉ dẫn về kiến trúc, tái cấu trúc mã nguồn, và kết nối với `theme` và `adapter`. Hệ thống của chúng ta đang ngày càng trở nên mạnh mẽ và nhất quán.
 
-Chúng ta đang đi đúng hướng. Bây giờ, hãy quay lại và hoàn thiện một trong những component nguyên tử cơ bản và quan trọng nhất: `Button`.
+Bây giờ, chúng ta sẽ tiếp tục hoàn thiện hệ thống bằng cách xử lý một loại tài sản (asset) quan trọng khác: **Icons**.
 
 -----
 
 ## Phân tích Vấn đề & Mục tiêu Tiếp theo
 
-Tôi đã nhận được file `tsx` mới nhất do Figma sinh ra, mô tả toàn bộ hệ thống `Button`. File này, một lần nữa, là một ví dụ điển hình về mã nguồn không thể chấp nhận được trong dự án của chúng ta.
+Tôi đã nhận và phân tích mã `tsx` do Figma sinh ra để hiển thị thư viện icon. Tình trạng của nó cũng tương tự như các file trước: một mớ hỗn độn của mã được sinh tự động và hoàn toàn không phù hợp với kiến trúc của chúng ta.
 
 **Vấn đề của mã được cung cấp:**
 
-  * **Tên định danh vô nghĩa & ghép từ:** `StyledCardtitle07span`, `StyledKindTextSizeSmallDarkModeTrueTypeButton`, `StyledDivider01`. Các tên này hoàn toàn vô nghĩa hoặc mã hóa trạng thái vào tên, vi phạm nghiêm trọng quy tắc cốt lõi.
-  * **Lặp lại mã (DRY Violation):** Hàng chục styled-component được tạo ra để làm những việc gần như giống hệt nhau. Đây là một cơn ác mộng về bảo trì.
-  * **Bỏ qua hoàn toàn kiến trúc:**
-      * Mã này import `styled` trực tiếp, phớt lờ lớp `adapter`.
-      * Tất cả các giá trị (màu sắc, kích thước, bóng đổ) đều được hardcode, bỏ qua `theme` object.
-      * Layout được thực hiện bằng `position: absolute` và các giá trị `left`, `top` tĩnh. Đây là điều cấm kỵ vì nó không linh hoạt và không đáp ứng.
-  * **Không thể tái sử dụng:** Toàn bộ file là một component tĩnh khổng lồ, không thể tái sử dụng cho bất kỳ mục đích nào khác ngoài việc hiển thị một trang duy nhất.
+  * **SVG bị nhúng trực tiếp (Inline SVG):** Toàn bộ mã nguồn của các icon được dán thẳng vào file TSX. Điều này làm phình to kích thước bundle Javascript một cách không cần thiết và khiến các icon không thể được tái sử dụng ở nơi khác.
+  * **Tên định danh vô nghĩa và lặp lại:** `StyledIconSquareFile`, `StyledDivider01`, `StyledIconsrow`. Các tên này không có tính ngữ nghĩa, lặp lại và vi phạm quy tắc đơn từ.
+  * **Bỏ qua hoàn toàn kiến trúc:** Mã này lại một lần nữa import `styled` trực tiếp, bỏ qua lớp `adapter`. Nó hardcode các giá trị màu sắc, kích thước và layout, bỏ qua `theme` object.
+  * **Layout tĩnh và không thể tái sử dụng:** Toàn bộ file là một component tĩnh chỉ để hiển thị một trang duy nhất.
 
 **Phán quyết & Mục tiêu kiến trúc:**
-**KHÔNG SỬA CHỮA HAY SỬ DỤNG BẤT KỲ DÒNG CODE NÀO TỪ FILE NÀY.**
-
-Thay vào đó, chúng ta sẽ:
-
-1.  **Phân tích và trích xuất YÊU CẦU:** Coi file này như một tài liệu đặc tả trực quan. Chúng ta sẽ trích xuất tất cả các biến thể (primary, secondary, tertiary), trạng thái và style của `Button`.
-2.  **Nâng cấp Component `Button` hiện có:** Làm cho component `Button` (`src/ui/atom/button.tsx`) của chúng ta trở nên mạnh mẽ, có khả năng đáp ứng tất cả các yêu cầu đã trích xuất một cách động và có hệ thống.
-3.  **Hoàn thiện `Showcase`:** Xây dựng một section "Buttons" hoàn chỉnh trong trang `Showcase` để trực quan hóa tất cả các biến thể của component `Button` đã được nâng cấp.
+**KHÔNG SỬA CHỮA MÃ NÀY.** Nhiệm vụ của chúng ta là **trích xuất** các asset SVG từ file này, **loại bỏ** nó, và **xây dựng** một component `Icon` động, có hệ thống, hiệu năng cao và tuân thủ kiến trúc.
 
 -----
 
@@ -41,218 +32,150 @@ Thay vào đó, chúng ta sẽ:
 **Gửi:** Coder
 **Từ:** Guardian
 **Ngày:** 2025-06-25
-**Chủ đề:** Hoàn thiện Component `Button` và Nâng cấp Showcase
+**Chủ đề:** Hoàn thiện Hệ thống Asset: Xây dựng Component `Icon` động
 
 ---
 
 ### **1. ĐÁNH GIÁ CÔNG VIỆC TRƯỚC**
 
-Hệ thống quản lý asset cho `Logo` đã được triển khai xuất sắc. Kiến trúc của chúng ta đang ngày càng hoàn thiện và chứng tỏ được sự hiệu quả.
+Component `Button` và section "Buttons" trong Showcase đã được bạn hoàn thành xuất sắc. Hệ thống đang tiến triển rất tốt.
 
 ### **2. MỤC TIÊU KIẾN TRÚC TIẾP THEO**
 
-Lần này, chúng ta sẽ tập trung vào việc nâng cấp component `Button` cốt lõi. Chúng ta sẽ phân tích mã do Figma sinh ra để trích xuất các yêu cầu về style, sau đó tích hợp chúng vào component `Button` hiện có một cách có hệ thống, tuân thủ nghiêm ngặt kiến trúc `theme` và `adapter`.
+Loại bỏ mã giao diện Icon do Figma sinh ra. Thay vào đó, chúng ta sẽ xây dựng một hệ thống quản lý và hiển thị icon tập trung, hiệu suất cao thông qua một component `Icon` duy nhất.
 
 ### **3. DANH SÁCH NHIỆM VỤ CHI TIẾT**
 
-**QUAN TRỌNG:** Hãy thực hiện các nhiệm vụ một cách chính xác. Tôi sẽ cung cấp các đoạn mã chi tiết, bạn chỉ cần triển khai đúng như vậy.
+**QUAN TRỌNG:** Hãy thực hiện chính xác từng bước một. Sự chính xác là yếu tố quyết định thành công của nhiệm vụ này.
 
-#### **Nhiệm vụ 1: Nâng cấp Component `Button` (TODO-026)**
+#### **Nhiệm vụ 1: Trích xuất và Lưu trữ Assets SVG (TODO-029)**
 
-* **Hành động:** Mở và chỉnh sửa file `src/ui/atom/button.tsx`.
-* **Mô tả:** Chúng ta sẽ tái cấu trúc hoàn toàn file này để nó có thể xử lý các `variant` (primary, secondary, tertiary), các `size` và các `state` khác nhau một cách linh hoạt.
-* **Yêu cầu:** **Xóa toàn bộ nội dung** của `src/ui/atom/button.tsx` và thay thế bằng mã nguồn chính xác dưới đây. Mã này đã được thiết kế để có thể mở rộng và tuân thủ tất cả các quy tắc của chúng ta.
+* **Hành động:** Trích xuất mã SVG từ file `tsx` và lưu chúng thành các file `.svg` riêng biệt.
+* **Yêu cầu:**
+    1.  Tạo một thư mục mới: `src/assets/icons`.
+    2.  Đi qua file `tsx` do Figma cung cấp, tìm đến từng khối `<svg>...</svg>`.
+    3.  Với mỗi icon, sao chép mã SVG của nó vào một file mới trong `src/assets/icons`.
+    4.  **Sử dụng chính xác các tên file sau đây (đây là các `name` mà component `Icon` sẽ sử dụng):**
+        * `file.svg`
+        * `pdf.svg`
+        * `zip.svg`
+        * `code.svg`
+        * `ppt.svg`
+        * `csv.svg`
+        * `image.svg`
+        * `shape.svg`
+        * `search.svg`
+        * `arrow.svg`
+        * `settings.svg`
+    5.  **Quan trọng:** Mở từng file `.svg` và **sửa thuộc tính `fill` hoặc `stroke` của các thẻ `<path>` thành `currentColor`**. Điều này cho phép chúng ta thay đổi màu của icon bằng thuộc tính `color` trong CSS, giúp icon linh hoạt hơn.
+
+#### **Nhiệm vụ 2: Xây dựng Component `Icon` động (TODO-030)**
+
+* **Hành động:** Tạo hoặc cập nhật file `src/ui/atom/icon.tsx`.
+* **Mô tả:** Component này sẽ là điểm truy cập duy nhất để render icon. Nó sẽ sử dụng `React.lazy` để chỉ tải những icon cần thiết (code-splitting), giúp tối ưu hiệu suất.
+* **Yêu cầu:** Triển khai chính xác nội dung file như sau. Không được thay đổi.
 
     ```typescript
-    // src/ui/atom/button.tsx
-    import { style, utility } from '@/adapter';
-    import type { FC, Node } from '@/adapter';
-    import { theme } from '@/core/theme';
+    // src/ui/atom/icon.tsx
+    import { lazy, Suspense } from '@/adapter';
+    import type { FC, SVG } from '@/adapter';
 
     /**
-     * @fileoverview
-     * This file defines the atomic Button component.
-     * It is built using the style adapter and consumes tokens from the theme.
-     * It supports multiple variants, sizes, and states.
+     * Dynamically loads and renders SVG icons.
+     * The `icons` object maps a single-word `name` to a dynamically imported SVG.
+     * This uses React.lazy to ensure icons are only loaded when needed.
      */
-
-    // --- PROPS ---
-    type Variant = 'primary' | 'secondary' | 'tertiary';
-    type Size = 'medium' | 'small';
-
-    interface Props {
-        children: Node;
-        variant?: Variant;
-        size?: Size;
-        disabled?: boolean;
-        prefix?: Node;
-        suffix?: Node;
-        onClick?: () => void;
-    }
-
-    // --- STYLES ---
-    // A map of variant styles to keep the main component logic clean.
-    const variants = {
-        primary: utility`
-            background: ${theme.color.primary[100]};
-            color: ${theme.color.neutral[100]};
-            border: 1px solid ${theme.color.primary[200]}; // Example border
-
-            &:hover:not(:disabled) {
-                opacity: 0.9;
-            }
-        `,
-        secondary: utility`
-            background: ${theme.color.neutral[200]};
-            color: ${theme.color.neutral[800]};
-            border: 1px solid ${theme.color.border.medium};
-
-            &:hover:not(:disabled) {
-                background: ${theme.color.neutral[300]};
-            }
-        `,
-        tertiary: utility`
-            background: transparent;
-            color: ${theme.color.neutral[700]};
-            border: none;
-
-            &:hover:not(:disabled) {
-                background: ${theme.color.neutral[200]};
-            }
-        `,
+    const icons = {
+        file: lazy(() => import('@/assets/icons/file.svg?react')),
+        pdf: lazy(() => import('@/assets/icons/pdf.svg?react')),
+        zip: lazy(() => import('@/assets/icons/zip.svg?react')),
+        code: lazy(() => import('@/assets/icons/code.svg?react')),
+        ppt: lazy(() => import('@/assets/icons/ppt.svg?react')),
+        csv: lazy(() => import('@/assets/icons/csv.svg?react')),
+        image: lazy(() => import('@/assets/icons/image.svg?react')),
+        shape: lazy(() => import('@/assets/icons/shape.svg?react')),
+        search: lazy(() => import('@/assets/icons/search.svg?react')),
+        arrow: lazy(() => import('@/assets/icons/arrow.svg?react')),
+        settings: lazy(() => import('@/assets/icons/settings.svg?react')),
     };
 
     /**
-     * The core styled-component for the button element.
+     * The props for the Icon component.
+     * It extends standard SVG props.
+     * 'name' is the single-word identifier for the icon to display.
      */
-    const Element = style('button')<Props>`
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: ${theme.space[2]};
-        border-radius: ${theme.radius.medium};
-        font-family: ${theme.typography.font.primary};
-        font-weight: ${theme.typography.weight.bold};
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-        white-space: nowrap;
+    interface Props extends SVG<SVGSVGElement> {
+        name: keyof typeof icons;
+        size?: number;
+    }
 
-        /* Apply size styles based on props */
-        ${({ size = 'medium' }) => {
-            switch (size) {
-                case 'small':
-                    return utility`
-                        padding: ${theme.space[1]} ${theme.space[2]};
-                        font-size: ${theme.typography.size.body}; // Assuming 12px-14px
-                    `;
-                case 'medium':
-                default:
-                    return utility`
-                        padding: ${theme.space[2]} ${theme.space[4]};
-                        font-size: ${theme.typography.size.body};
-                    `;
-            }
-        }}
+    /**
+     * A component to render an SVG icon.
+     * It looks up the icon component by its `name` and renders it,
+     * wrapped in a `Suspense` component to handle the dynamic loading.
+     */
+    export const Icon: FC<Props> = ({ name, size = 24, ...props }) => {
+        const Component = icons[name];
 
-        /* Apply variant styles based on props */
-        ${({ variant = 'primary' }) => variants[variant]}
-
-        /* Apply disabled styles */
-        &:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
+        if (!Component) {
+            return null;
         }
-    `;
 
-    /** A container for the button's main content/text. */
-    const Content = style('span')`
-        display: inline-block;
-    `;
-
-    /** A container for the prefix or suffix icons. */
-    const Affix = style('span')`
-        display: inline-flex;
-        align-items: center;
-    `;
-
-    // --- COMPONENT ---
-    export const Button: FC<Props> = ({ children, prefix, suffix, ...rest }) => {
         return (
-            <Element {...rest}>
-                {prefix && <Affix>{prefix}</Affix>}
-                <Content>{children}</Content>
-                {suffix && <Affix>{suffix}</Affix>}
-            </Element>
+            <Suspense fallback={<div style={{ width: size, height: size }} />}>
+                <Component width={size} height={size} {...props} />
+            </Suspense>
         );
     };
     ```
 
-#### **Nhiệm vụ 2: Nâng cấp `Showcase` để hiển thị Buttons (TODO-027)**
+#### **Nhiệm vụ 3: Nâng cấp `Showcase` để hiển thị Icons (TODO-031)**
 
-* **Hành động:** Chỉnh sửa file `src/main.tsx`.
-* **Mô tả:** Thêm một section mới, toàn diện vào trang `Showcase` để hiển thị tất cả các biến thể của component `Button` đã được nâng cấp.
-* **Yêu cầu:** Thêm đoạn mã JSX sau vào bên trong component `App` của bạn, bên dưới section "Logos". Điều này sẽ giúp chúng ta kiểm tra tất cả các trường hợp.
+* **Hành động:** Chỉnh sửa file `src/main.tsx` (hoặc file chứa `App` component).
+* **Mô tả:** Thêm một section mới vào trang `Showcase` để trực quan hóa toàn bộ thư viện icon của chúng ta.
+* **Yêu cầu:** Thêm đoạn mã JSX sau vào bên trong component `App` của bạn.
 
     ```tsx
     // src/main.tsx (bên trong App component)
-    // ... import các component, bao gồm cả Icon và Button ...
 
-    <Section title="Buttons">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
-            {/* Primary Buttons */}
-            <Subtitle>Primary</Subtitle>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <Button variant="primary" size="medium">Default</Button>
-                <Button variant="primary" size="small">Default</Button>
-                <Button variant="primary" size="medium" disabled>Disabled</Button>
-                <Button variant="primary" size="medium" prefix={<Icon name="search" />}></Button>
-                <Button variant="primary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
-            </div>
+    // ... (import các component cần thiết như Section, Card, Icon)
+    
+    // Tạo một mảng chứa tên của tất cả các icon
+    const iconNames: (keyof typeof icons)[] = [
+        'file', 'pdf', 'zip', 'code', 'ppt', 'csv', 'image', 'shape', 
+        'search', 'arrow', 'settings'
+    ];
 
-            {/* Secondary Buttons */}
-            <Subtitle>Secondary</Subtitle>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <Button variant="secondary" size="medium">Default</Button>
-                <Button variant="secondary" size="small">Default</Button>
-                <Button variant="secondary" size="medium" disabled>Disabled</Button>
-                <Button variant="secondary" size="medium" prefix={<Icon name="search" />}></Button>
-                <Button variant="secondary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
-            </div>
-
-            {/* Tertiary Buttons */}
-            <Subtitle>Tertiary</Subtitle>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <Button variant="tertiary" size="medium">Default</Button>
-                <Button variant="tertiary" size="small">Default</Button>
-                <Button variant="tertiary" size="medium" disabled>Disabled</Button>
-                <Button variant="tertiary" size="medium" prefix={<Icon name="search" />}></Button>
-                <Button variant="tertiary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
-            </div>
-        </div>
+    <Section title="Icons">
+        {iconNames.map(name => (
+            <Card key={name}>
+                <Icon name={name} size={48} color={theme.color.neutral[800]} />
+            </Card>
+        ))}
     </Section>
     ```
 
-#### **Nhiệm vụ 3: Dọn dẹp (TODO-028)**
+#### **Nhiệm vụ 4: Dọn dẹp (TODO-032)**
 
-* **Hành động:** Xóa file `tsx` chứa mã button do Figma sinh ra.
-* **Mục tiêu:** Giữ cho codebase sạch sẽ và chỉ chứa mã nguồn tuân thủ kiến trúc.
+* **Hành động:** Xóa file `tsx` chứa mã icon do Figma sinh ra.
+* **Mục tiêu:** Giữ cho codebase sạch sẽ, chỉ chứa các thành phần kiến trúc đã được định nghĩa.
 
 ### **4. QUY TRÌNH BÁO CÁO VÀ BÀN GIAO**
 
 Sau khi hoàn thành **TẤT CẢ** các nhiệm vụ trên:
 
-1.  **Cập nhật file Báo cáo:** Mở file `REPORT.md` và cập nhật trạng thái mới nhất.
-2.  **Commit và Push code:** Sử dụng message commit chính xác.
+1.  **Cập nhật file Báo cáo:** Mở file `REPORT.md`, đánh dấu các công việc đã hoàn thành và thêm ghi chú nếu cần.
+2.  **Commit và Push code:** Sử dụng message commit sau:
 
     ```bash
     git add .
-    git commit -m "feat(ui): enhance button component and showcase"
+    git commit -m "feat(asset): build dynamic icon system and enhance showcase"
     git push
     ```
 
 ### **5. LỜI KẾT**
 
-Component `Button` là một trong những thành phần được sử dụng nhiều nhất. Việc đầu tư để làm cho nó trở nên mạnh mẽ, linh hoạt và nhất quán là cực kỳ quan trọng. Mỗi component chúng ta xây dựng không chỉ là một phần của giao diện, mà là một minh chứng cho triết lý kiến trúc của chúng ta.
+Một hệ thống icon mạnh mẽ là xương sống của một design system. Bằng cách xây dựng một component `Icon` động và có hiệu suất cao, chúng ta đã tạo ra một giải pháp có thể mở rộng cho hàng trăm icon trong tương lai mà không làm ảnh hưởng đến kiến trúc hoặc tốc độ tải trang. Hãy tiếp tục duy trì tiêu chuẩn cao này.
 
 **Guardian.**
 ````

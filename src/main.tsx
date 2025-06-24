@@ -132,6 +132,15 @@ const App: FC = () => (
             </div>
         </Section>
 
+        <Section title="Icons">
+            {['file', 'pdf', 'zip', 'code', 'ppt', 'csv', 'image', 'shape'].map(name => (
+                <Card key={name}>
+                    <Icon name={name as any} size={48} color={theme.color.neutral[800]} />
+                    <Text>{name}</Text>
+                </Card>
+            ))}
+        </Section>
+
         <Palette title="Primary Colors" colors={theme.color.primary} />
         <Palette title="Secondary Colors" colors={theme.color.secondary} />
         <Palette title="Neutral Colors" colors={theme.color.neutral} />
