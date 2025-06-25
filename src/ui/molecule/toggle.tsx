@@ -13,43 +13,48 @@ const Hidden = style('input').attrs({ type: 'checkbox' })`
     width: 1px;
 `;
 
-const Track = style('div')<{ checked: boolean }>`
+const Track = style('div')<{ checked: boolean; disabled?: boolean }>`
     width: 32px;
     height: 16px;
-    background: ${({ checked }) => (checked ? theme.color.primary[100] : theme.color.neutral[300])};
+    background: ${({ checked, disabled }) => 
+        disabled ? theme.color.neutral[200] : 
+        checked ? theme.color.primary[100] : theme.color.neutral[300]
+    };
     border-radius: 16px;
     position: relative;
     transition: background 150ms;
+    opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
-const Thumb = style('div')<{ checked: boolean }>`
+const Thumb = style('div')<{ checked: boolean; disabled?: boolean }>`
     position: absolute;
     top: 2px;
     left: ${({ checked }) => (checked ? '16px' : '2px')};
     width: 12px;
     height: 12px;
-    background: white;
+    background: ${({ disabled }) => disabled ? theme.color.neutral[300] : 'white'};
     border-radius: 50%;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     transition: left 150ms;
 `;
 
-const Wrapper = style('label')`
+const Wrapper = style('label')<{ disabled?: boolean }>`
     display: inline-flex;
     align-items: center;
     gap: ${theme.space[2]};
-    cursor: pointer;
+    cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
+    opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
 interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
 }
 
-export const Toggle: FC<Props> = ({ label, checked, ...rest }) => (
-    <Wrapper>
-        <Hidden checked={checked} {...rest} />
-        <Track checked={!!checked}>
-            <Thumb checked={!!checked} />
+export const Toggle: FC<Props> = ({ label, checked, disabled, ...rest }) => (
+    <Wrapper disabled={disabled}>
+        <Hidden checked={checked} disabled={disabled} {...rest} />
+        <Track checked={!!checked} disabled={disabled}>
+            <Thumb checked={!!checked} disabled={disabled} />
         </Track>
         {label && <span>{label}</span>}
     </Wrapper>

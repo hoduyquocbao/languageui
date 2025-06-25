@@ -14,23 +14,31 @@ const Hidden = style('input').attrs({ type: 'checkbox' })`
     width: 1px;
 `;
 
-const Box = style('div')<{ checked: boolean }>`
+const Box = style('div')<{ checked: boolean; disabled?: boolean }>`
     width: 16px;
     height: 16px;
-    border: 1px solid ${({ checked }) => (checked ? theme.color.primary[100] : theme.color.neutral[300])};
-    background: ${({ checked }) => (checked ? theme.color.primary[100] : 'white')};
+    border: 1px solid ${({ checked, disabled }) => 
+        disabled ? theme.color.neutral[300] : 
+        checked ? theme.color.primary[100] : theme.color.neutral[300]
+    };
+    background: ${({ checked, disabled }) => 
+        disabled ? theme.color.neutral[100] : 
+        checked ? theme.color.primary[100] : 'white'
+    };
     border-radius: ${theme.radius.small};
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 150ms;
+    opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
-const Wrapper = style('label')`
+const Wrapper = style('label')<{ disabled?: boolean }>`
     display: inline-flex;
     align-items: center;
     gap: ${theme.space[2]};
-    cursor: pointer;
+    cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
+    opacity: ${({ disabled }) => disabled ? 0.5 : 1};
 `;
 
 interface Props {
@@ -42,7 +50,7 @@ interface Props {
 }
 
 export const Checkbox: FC<Props> = ({ label, checked, defaultChecked, disabled, onChange, ...rest }) => (
-    <Wrapper>
+    <Wrapper disabled={disabled}>
         <Hidden 
             checked={checked} 
             defaultChecked={defaultChecked}
@@ -50,7 +58,7 @@ export const Checkbox: FC<Props> = ({ label, checked, defaultChecked, disabled, 
             onChange={onChange}
             {...rest} 
         />
-        <Box checked={!!checked}>
+        <Box checked={!!checked} disabled={disabled}>
             {checked && <Icon kind="line" name="check" size={12} color="white" />}
         </Box>
         {label && <span>{label}</span>}

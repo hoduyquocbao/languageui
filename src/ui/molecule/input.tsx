@@ -37,6 +37,9 @@ const Prefix = style('div')`
     left: ${theme.space[3]};
     color: ${theme.color.neutral[500]};
     pointer-events: none;
+    display: flex;
+    align-items: center;
+    z-index: 1;
 `;
 
 const Suffix = style('div')`
@@ -44,6 +47,9 @@ const Suffix = style('div')`
     right: ${theme.space[3]};
     color: ${theme.color.neutral[500]};
     pointer-events: none;
+    display: flex;
+    align-items: center;
+    z-index: 1;
 `;
 
 interface Props {
