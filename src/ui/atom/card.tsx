@@ -29,25 +29,31 @@ interface Props {
     shadow?: ShadowKey;
 }
 
+interface StyledProps {
+    children: Node;
+    $variant?: 'primary' | 'secondary' | 'neutral';
+    $shadow?: ShadowKey;
+}
+
 /**
  * @name Element
  * @description The styled-component representing the card.
  * It dynamically applies styles for background, border-radius, padding, and box-shadow
  * based on the props passed and the values from the global theme.
  */
-const Element = style('div')<Props>`
+const Element = style('div')<StyledProps>`
     background: ${({ theme }) => theme.color.neutral[100]};
     border-radius: ${({ theme }) => theme.radius.large};
     padding: ${({ theme }) => theme.space[4]};
-    box-shadow: ${({ theme, variant = 'neutral', shadow = 'sm' }) => theme.shadow[variant][shadow]};
+    box-shadow: ${({ theme, $variant = 'neutral', $shadow = 'sm' }) => theme.shadow[$variant][$shadow]};
     transition: box-shadow 0.3s ease-in-out;
 
     &:hover {
-        box-shadow: ${({ theme, variant = 'neutral', shadow = 'sm' }) => {
-            const keys = Object.keys(theme.shadow[variant]) as ShadowKey[];
-            const currentIndex = keys.indexOf(shadow);
+        box-shadow: ${({ theme, $variant = 'neutral', $shadow = 'sm' }) => {
+            const keys = Object.keys(theme.shadow[$variant]) as ShadowKey[];
+            const currentIndex = keys.indexOf($shadow);
             const nextIndex = Math.min(currentIndex + 1, keys.length - 1);
-            return theme.shadow[variant][keys[nextIndex]];
+            return theme.shadow[$variant][keys[nextIndex]];
         }};
     }
 `;
@@ -60,6 +66,6 @@ const Element = style('div')<Props>`
  * @param {Props} props - The properties for the component.
  * @returns {JSX.Element} The rendered card component.
  */
-export const Card: FC<Props> = ({ children, ...rest }) => (
-    <Element {...rest}>{children}</Element>
+export const Card: FC<Props> = ({ children, variant, shadow, ...rest }) => (
+    <Element $variant={variant} $shadow={shadow} {...rest}>{children}</Element>
 ); 

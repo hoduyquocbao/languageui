@@ -1,7 +1,6 @@
-import { style } from '@/adapter';
+import { style, state, effect } from '@/adapter';
 import { theme } from '@/core/theme';
 import type { FC } from '@/adapter';
-import { useState, useEffect } from 'react';
 
 const Hidden = style('input').attrs({ type: 'checkbox' })`
     border: 0;
@@ -52,9 +51,9 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Toggle: FC<Props> = ({ label, checked, disabled, ...rest }) => {
-    const [isChecked, setIsChecked] = useState(false);
+    const [isChecked, setIsChecked] = state(false);
     
-    useEffect(() => {
+    effect(() => {
         if (checked !== undefined) {
             setIsChecked(checked);
         }
@@ -71,7 +70,7 @@ export const Toggle: FC<Props> = ({ label, checked, disabled, ...rest }) => {
 
     return (
         <Wrapper disabled={disabled}>
-            <Hidden checked={currentChecked} disabled={disabled} onChange={handleChange} {...rest} />
+            <Hidden checked={checked !== undefined ? checked : undefined} disabled={disabled} onChange={handleChange} {...rest} />
             <Track checked={currentChecked} disabled={disabled}>
                 <Thumb checked={currentChecked} disabled={disabled} />
             </Track>

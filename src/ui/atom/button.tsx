@@ -24,6 +24,16 @@ interface Props {
     onClick?: () => void;
 }
 
+interface StyledProps {
+    children: Node;
+    $variant?: Variant;
+    $size?: Size;
+    disabled?: boolean;
+    prefix?: Node;
+    suffix?: Node;
+    onClick?: () => void;
+}
+
 // --- STYLES ---
 // Map các style cho từng variant để tách logic style khỏi component chính.
 const variants = {
@@ -59,7 +69,7 @@ const variants = {
 /**
  * Component styled chính cho button.
  */
-const Element = style('button')<Props>`
+const Element = style('button')<StyledProps>`
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -72,8 +82,8 @@ const Element = style('button')<Props>`
     white-space: nowrap;
 
     /* Style theo size */
-    ${({ size = 'medium' }) => {
-        switch (size) {
+    ${({ $size = 'medium' }) => {
+        switch ($size) {
             case 'small':
                 return utility`
                     padding: ${theme.space[1]} ${theme.space[2]};
@@ -89,7 +99,7 @@ const Element = style('button')<Props>`
     }}
 
     /* Style theo variant */
-    ${({ variant = 'primary' }) => variants[variant]}
+    ${({ $variant = 'primary' }) => variants[$variant]}
 
     /* Style disabled */
     &:disabled {
@@ -110,9 +120,9 @@ const Affix = style('span')`
 `;
 
 // --- COMPONENT ---
-export const Button: FC<Props> = ({ children, prefix, suffix, ...rest }) => {
+export const Button: FC<Props> = ({ children, prefix, suffix, variant, size, ...rest }) => {
     return (
-        <Element {...rest}>
+        <Element $variant={variant} $size={size} {...rest}>
             {prefix && <Affix>{prefix}</Affix>}
             <Content>{children}</Content>
             {suffix && <Affix>{suffix}</Affix>}

@@ -1,8 +1,7 @@
-import { style } from '@/adapter';
+import { style, state, effect } from '@/adapter';
 import { theme } from '@/core/theme';
 import type { FC } from '@/adapter';
 import { Icon } from '@/ui/atom/icon';
-import { useState, useEffect } from 'react';
 
 const Hidden = style('input').attrs({ type: 'checkbox' })`
     border: 0;
@@ -51,9 +50,9 @@ interface Props {
 }
 
 export const Checkbox: FC<Props> = ({ label, checked, defaultChecked, disabled, onChange, ...rest }) => {
-    const [isChecked, setIsChecked] = useState(defaultChecked || false);
+    const [isChecked, setIsChecked] = state(defaultChecked || false);
     
-    useEffect(() => {
+    effect(() => {
         if (checked !== undefined) {
             setIsChecked(checked);
         }
@@ -71,8 +70,8 @@ export const Checkbox: FC<Props> = ({ label, checked, defaultChecked, disabled, 
     return (
         <Wrapper disabled={disabled}>
             <Hidden 
-                checked={currentChecked} 
-                defaultChecked={defaultChecked}
+                checked={checked !== undefined ? checked : undefined}
+                defaultChecked={checked === undefined ? defaultChecked : undefined}
                 disabled={disabled}
                 onChange={handleChange}
                 {...rest} 
