@@ -12,7 +12,7 @@ import { Swatch } from '@/ui/atom/swatch';
 import type { FC, Node } from '@/adapter';
 import { Logo } from '@/ui/atom/logo';
 import { Button } from '@/ui/atom/button';
-import { Icon } from '@/ui/atom/icon';
+import { Icon, icons } from '@/ui/atom/icon';
 
 /**
  * @name Global
@@ -73,6 +73,14 @@ const Palette: FC<{ title: string; colors: Record<string, string> }> = ({ title,
 );
 
 /**
+ * @name DarkCard
+ * @description A Card variant with dark background for social icons.
+ */
+const DarkCard = style(Card)`
+  background-color: ${theme.color.neutral[800]};
+`;
+
+/**
  * @name App
  * @description The root component of the application.
  * It renders a showcase of the design system's components, specifically demonstrating
@@ -106,8 +114,8 @@ const App: FC = () => (
                     <Button variant="primary" size="medium">Default</Button>
                     <Button variant="primary" size="small">Default</Button>
                     <Button variant="primary" size="medium" disabled>Disabled</Button>
-                    <Button variant="primary" size="medium" prefix={<Icon name="search" />}>{""}</Button>
-                    <Button variant="primary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+                    <Button variant="primary" size="medium" prefix={<Icon kind="line" name="search" />}>{""}</Button>
+                    <Button variant="primary" size="small" prefix={<Icon kind="line" name="search" />} suffix={<Icon kind="line" name="arrow" />}>Search</Button>
                 </div>
 
                 {/* Secondary Buttons */}
@@ -116,8 +124,8 @@ const App: FC = () => (
                     <Button variant="secondary" size="medium">Default</Button>
                     <Button variant="secondary" size="small">Default</Button>
                     <Button variant="secondary" size="medium" disabled>Disabled</Button>
-                    <Button variant="secondary" size="medium" prefix={<Icon name="search" />}>{""}</Button>
-                    <Button variant="secondary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+                    <Button variant="secondary" size="medium" prefix={<Icon kind="line" name="search" />}>{""}</Button>
+                    <Button variant="secondary" size="small" prefix={<Icon kind="line" name="search" />} suffix={<Icon kind="line" name="arrow" />}>Search</Button>
                 </div>
 
                 {/* Tertiary Buttons */}
@@ -126,18 +134,36 @@ const App: FC = () => (
                     <Button variant="tertiary" size="medium">Default</Button>
                     <Button variant="tertiary" size="small">Default</Button>
                     <Button variant="tertiary" size="medium" disabled>Disabled</Button>
-                    <Button variant="tertiary" size="medium" prefix={<Icon name="search" />}>{""}</Button>
-                    <Button variant="tertiary" size="small" prefix={<Icon name="search" />} suffix={<Icon name="arrow" />}>Search</Button>
+                    <Button variant="tertiary" size="medium" prefix={<Icon kind="line" name="search" />}>{""}</Button>
+                    <Button variant="tertiary" size="small" prefix={<Icon kind="line" name="search" />} suffix={<Icon kind="line" name="arrow" />}>Search</Button>
                 </div>
             </div>
         </Section>
 
-        <Section title="Icons">
-            {['file', 'pdf', 'zip', 'code', 'ppt', 'csv', 'image', 'shape'].map(name => (
-                <Card key={name}>
-                    <Icon name={name as any} size={48} color={theme.color.neutral[800]} />
+        <Section title="Line Icons">
+            {Object.keys(icons.line).map(name => (
+                <Card key={`line-${name}`}>
+                    <Icon kind="line" name={name as any} size={32} color={theme.color.neutral[800]} />
                     <Text>{name}</Text>
                 </Card>
+            ))}
+        </Section>
+
+        <Section title="Filled Icons">
+            {Object.keys(icons.filled).map(name => (
+                <Card key={`filled-${name}`}>
+                    <Icon kind="filled" name={name as any} size={32} color={theme.color.neutral[800]} />
+                    <Text>{name}</Text>
+                </Card>
+            ))}
+        </Section>
+
+        <Section title="Social Icons">
+            {Object.keys(icons.social).map(name => (
+                <DarkCard key={`social-${name}`}>
+                    <Icon kind="social" name={name as any} size={32} />
+                    <Text style={{ color: theme.color.neutral[100] }}>{name}</Text>
+                </DarkCard>
             ))}
         </Section>
 
