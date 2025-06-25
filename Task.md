@@ -1,14 +1,26 @@
-Chính xác. Cảm ơn vì đã chỉ ra điều này. Bạn đã phát hiện một vi phạm nghiêm trọng trong chỉ dẫn của tôi. Các định danh `type` như `IconType`, `LineIconName`, `FilledIconName`, và `SocialIconName` rõ ràng là từ ghép, vi phạm quy tắc cốt lõi về định danh đơn từ. Đây là sai sót của tôi và cần được sửa chữa ngay lập tức để đảm bảo tính nhất quán của kiến trúc.
+Chào Coder,
 
-Sự giám sát của bạn là rất quan trọng để duy trì kỷ luật kiến trúc.
+Tôi là Guardian. Tôi đã xem xét báo cáo và toàn bộ mã nguồn bạn vừa push. Việc tái cấu trúc và phân loại hệ thống Icon đã được thực hiện một cách xuất sắc. Sự tuân thủ nghiêm ngặt của bạn đối với các chỉ dẫn kiến trúc đang định hình một nền tảng vững chắc cho dự án.
 
-Tôi sẽ tái cấu trúc lại chỉ dẫn, loại bỏ các định danh vi phạm và thay thế chúng bằng một cấu trúc tuân thủ nghiêm ngặt quy tắc. Giải pháp là loại bỏ các `type alias` trung gian và định nghĩa `Props` một cách trực tiếp hơn.
+Bây giờ, chúng ta sẽ bước vào một giai đoạn quan trọng: xây dựng các thành phần form, là xương sống cho mọi tương tác của người dùng.
 
-Dưới đây là phiên bản đã được sửa đổi và hoàn chỉnh của `TASK.md`. Hãy chuyển chỉ thị này cho Coder.
+## Phân tích Vấn đề & Mục tiêu Tiếp theo
+
+Tôi đã nhận và phân tích file `tsx` tiếp theo do Figma sinh ra, chứa các thành phần `Inputs`, `Text Area`, `Select`, `Checkboxes`, `Radio Buttons`, và `Toggle Buttons`. Không có gì ngạc nhiên, nó chứa đầy các anti-pattern mà chúng ta đã quen thuộc.
+
+**Vấn đề của mã được cung cấp:**
+
+  * **Kiến trúc phẳng, không tái sử dụng:** Toàn bộ file là một component hiển thị, không có sự phân tách thành các component con có thể tái sử dụng.
+  * **Tên định danh vi phạm hàng loạt:** `StyledCardBackground01`, `StyledSizeSmallStatusDefaultTypeDefault`, `StyledPlaceholderWrapper02` là những ví dụ rõ ràng về việc vi phạm quy tắc đơn từ.
+  * **Hardcode toàn diện:** Các giá trị `px`, `color`, `box-shadow` được định nghĩa inline hoặc qua biến CSS, hoàn toàn bỏ qua `theme` object của chúng ta.
+  * **Sử dụng `styled-components` trực tiếp:** Lớp `adapter` một lần nữa bị bỏ qua.
+
+**Phán quyết & Mục tiêu kiến trúc:**
+**KHÔNG SỬA CHỮA MÃ NÀY.** Nhiệm vụ của chúng ta là xây dựng một bộ component form hoàn toàn mới, có hệ thống, tuân thủ kiến trúc và có khả năng mở rộng. Chúng ta sẽ tạo ra một tầng kiến trúc mới cho việc này.
 
 -----
 
-### File 1: `TASK.md` (Phiên bản đã sửa lỗi và hoàn chỉnh)
+### File 1: `TASK.md` (Phiên bản mới)
 
 ````markdown
 # NHIỆM VỤ DÀNH CHO CODER
@@ -16,203 +28,191 @@ Dưới đây là phiên bản đã được sửa đổi và hoàn chỉnh củ
 **Gửi:** Coder
 **Từ:** Guardian
 **Ngày:** 2025-06-25
-**Chủ đề:** Mở rộng Hệ thống Asset: Tích hợp các bộ Icon và Nâng cấp Component (Bản sửa đổi)
+**Chủ đề:** Xây dựng Module Form và các Component Tương tác
 
 ---
 
-### **1. ĐÁNH GIÁ CÔNG VIỆC TRƯỚC**
+### **1. QUYẾT ĐỊNH KIẾN TRÚC MỚI: GIỚI THIỆU TẦNG "MOLECULE"**
 
-Hệ thống Icon động ban đầu đã được bạn hoàn thành xuất sắc. Hệ thống đang tiến triển rất tốt.
+Để hệ thống có cấu trúc rõ ràng, chúng ta sẽ giới thiệu một tầng kiến trúc mới: **Molecule**.
 
-### **2. MỤC TIÊU KIẾN TRÚC TIẾP THEO**
+* **Atom (Nguyên tử):** Là các khối xây dựng cơ bản nhất (`Button`, `Icon`, `Card`, `Text`).
+* **Molecule (Phân tử):** Là các nhóm component được xây dựng từ các Atom, phục vụ một mục đích cụ thể. Các component form (`Input`, `Select`, `Checkbox`) là ví dụ hoàn hảo.
 
-Chúng ta sẽ mở rộng hệ thống Icon bằng cách tích hợp các bộ "Line", "Filled", và "Social". Điều này đòi hỏi phải tổ chức lại các tài sản và nâng cấp component `Icon` để có khả năng xử lý các danh mục khác nhau, tăng cường khả năng mở rộng trong tương lai.
+**Hành động:** Tạo một thư mục mới: `src/ui/molecule`. Tất cả các component trong nhiệm vụ này sẽ được đặt ở đây.
 
-### **3. DANH SÁCH NHIỆM VỤ CHI TIẾT**
+### **2. DANH SÁCH NHIỆM VỤ CHI TIẾT**
 
-**QUAN TRỌNG:** Hãy thực hiện chính xác từng bước một.
+#### **Nhiệm vụ 1: Trích xuất SVG và Cập nhật Component Icon (TODO-037)**
 
-#### **Nhiệm vụ 1: Phân loại và Lưu trữ Toàn bộ Assets SVG (TODO-033)**
-
-* **Hành động:** Trích xuất toàn bộ SVG từ file `tsx` của Figma và tổ chức lại cấu trúc thư mục `src/assets/icons`.
+* **Hành động:** Trích xuất các icon cần thiết cho form và cập nhật component `Icon`.
 * **Yêu cầu:**
-    1.  Trong `src/assets/icons`, tạo các thư mục con sau: `line`, `filled`, `social`.
-    2.  **Di chuyển các icon hiện có** vào các thư mục tương ứng:
-        * Di chuyển `arrow.svg` và `search.svg` vào `src/assets/icons/line`.
-        * Di chuyển các icon còn lại (`file.svg`, `pdf.svg`, `zip.svg`, `code.svg`, `ppt.svg`, `csv.svg`, `image.svg`, `shape.svg`, `settings.svg`) vào `src/assets/icons/filled`.
-    3.  **Trích xuất các icon mới** từ file `tsx` được cung cấp và lưu chúng vào các thư mục phù hợp với tên file **chính xác** như sau:
+    1.  Trích xuất và lưu các file SVG sau vào `src/assets/icons/line`:
+        * `chevron-down.svg` (từ component Select)
+        * `check.svg` (từ component Checkbox, khác với icon `check` đã có trong `filled`)
+    2.  Mở từng file và đổi `fill` hoặc `stroke` thành `currentColor`.
+    3.  Cập nhật file `src/ui/atom/icon.tsx` để thêm 2 icon này vào object `icons.line`.
 
-        * **Trong `src/assets/icons/line`:**
-            * `up.svg` (từ `<path d="M3.91748 8.69235L10.7829 1.50005..."/>`)
-            * `down.svg` (từ `<path d="M17.6487 11.3077L10.7834 18.5..."/>`)
-            * `right.svg` (từ `<path d="M10.5908 3.1347L17.7831 10.0001..."/>`)
-            * `left.svg` (từ `<path d="M10.4755 16.8654L3.2832 10..."/>`)
-            * `up-right.svg` (từ `<path d="M7.08739 4.21523L16.7932 3.98952..."/>`)
-            * `up-left.svg` (từ `<path d="M4.99781 13.6795L4.77246 3.98967..."/>`)
-            * `down-right.svg` (từ `<path d="M6.93753 15.7811L16.7938 16.0103..."/>`)
-            * `down-left.svg` (từ `<path d="M4.99872 6.28154L4.77246 16.0106..."/>`)
-            * `transfer.svg` (từ `<path d="M15.7114 2.11458L19.6541 6.05729..."/>`)
+#### **Nhiệm vụ 2: Xây dựng Component `Input` (TODO-038)**
 
-        * **Trong `src/assets/icons/filled`:**
-            * `info.svg`
-            * `check.svg`
-
-        * **Trong `src/assets/icons/social`:**
-            * `facebook.svg`
-            * `twitter.svg`
-            * `google.svg`
-            * `calendar.svg`
-
-    4.  **Quan trọng:** Mở các file SVG trong thư mục `line` và `filled`, **sửa thuộc tính `fill` hoặc `stroke` của các thẻ `<path>` thành `currentColor`**.
-    5.  **KHÔNG** sửa đổi các file trong `social` vì chúng chứa màu sắc thương hiệu cố định.
-
-#### **Nhiệm vụ 2: Nâng cấp Component `Icon` (TODO-034)**
-
-* **Hành động:** Cập nhật file `src/ui/atom/icon.tsx` để hỗ trợ các loại icon khác nhau.
-* **Mô tả:** Component sẽ được nâng cấp để chấp nhận một prop `kind` (thay vì `type` để tránh xung đột với từ khóa) để chọn bộ icon. Các định danh `type alias` ghép từ đã bị loại bỏ để tuân thủ quy tắc kiến trúc.
-* **Yêu cầu:** Thay thế toàn bộ nội dung file `src/ui/atom/icon.tsx` bằng mã sau. Không được thay đổi.
+* **Hành động:** Tạo file `src/ui/molecule/input.tsx`.
+* **Mô tả:** Component này sẽ là trường nhập liệu văn bản tiêu chuẩn.
+* **Yêu cầu:** Triển khai chính xác nội dung file như sau.
 
     ```typescript
-    // src/ui/atom/icon.tsx
-    import { lazy, Suspense } from '@/adapter';
-    import type { FC, SVG } from '@/adapter';
+    // src/ui/molecule/input.tsx
+    import { style } from '@/adapter';
+    import { theme } from '@/core/theme';
+    import type { Node, FC } from '@/adapter';
+    import { Icon } from '@/ui/atom/icon';
+    import { Text } from '@/ui/atom/typography';
 
-    /**
-     * Maps icon kinds to their respective collections of dynamically imported SVGs.
-     * This nested structure organizes icons by category (line, filled, social)
-     * and uses React.lazy for performance-optimal code-splitting.
-     */
-    const icons = {
-        line: {
-            up: lazy(() => import('@/assets/icons/line/up.svg?react')),
-            down: lazy(() => import('@/assets/icons/line/down.svg?react')),
-            right: lazy(() => import('@/assets/icons/line/right.svg?react')),
-            left: lazy(() => import('@/assets/icons/line/left.svg?react')),
-            'up-right': lazy(() => import('@/assets/icons/line/up-right.svg?react')),
-            'down-right': lazy(() => import('@/assets/icons/line/down-right.svg?react')),
-            'up-left': lazy(() => import('@/assets/icons/line/up-left.svg?react')),
-            'down-left': lazy(() => import('@/assets/icons/line/down-left.svg?react')),
-            transfer: lazy(() => import('@/assets/icons/line/transfer.svg?react')),
-            arrow: lazy(() => import('@/assets/icons/line/arrow.svg?react')),
-            search: lazy(() => import('@/assets/icons/line/search.svg?react')),
-        },
-        filled: {
-            file: lazy(() => import('@/assets/icons/filled/file.svg?react')),
-            pdf: lazy(() => import('@/assets/icons/filled/pdf.svg?react')),
-            zip: lazy(() => import('@/assets/icons/filled/zip.svg?react')),
-            code: lazy(() => import('@/assets/icons/filled/code.svg?react')),
-            ppt: lazy(() => import('@/assets/icons/filled/ppt.svg?react')),
-            csv: lazy(() => import('@/assets/icons/filled/csv.svg?react')),
-            image: lazy(() => import('@/assets/icons/filled/image.svg?react')),
-            shape: lazy(() => import('@/assets/icons/filled/shape.svg?react')),
-            settings: lazy(() => import('@/assets/icons/filled/settings.svg?react')),
-            info: lazy(() => import('@/assets/icons/filled/info.svg?react')),
-            check: lazy(() => import('@/assets/icons/filled/check.svg?react')),
-        },
-        social: {
-            facebook: lazy(() => import('@/assets/icons/social/facebook.svg?react')),
-            twitter: lazy(() => import('@/assets/icons/social/twitter.svg?react')),
-            google: lazy(() => import('@/assets/icons/social/google.svg?react')),
-            calendar: lazy(() => import('@/assets/icons/social/calendar.svg?react')),
-        },
-    };
+    const Element = style('input')`
+        border: 1px solid ${theme.color.border.medium};
+        background: ${theme.color.neutral[100]};
+        border-radius: ${theme.radius.medium};
+        padding: ${theme.space[2]} ${theme.space[3]};
+        font-size: ${theme.typography.size.body};
+        color: ${theme.color.neutral[800]};
+        width: 100%;
+        transition: border-color 0.2s, box-shadow 0.2s;
 
-    // A generic props interface to ensure the `name` prop corresponds to the `kind` prop.
-    // Multi-word type aliases have been removed to adhere to the single-word identifier rule.
-    type Props =
-        | { kind: 'line'; name: keyof typeof icons.line; size?: number } & SVG<SVGSVGElement>
-        | { kind: 'filled'; name: keyof typeof icons.filled; size?: number } & SVG<SVGSVGElement>
-        | { kind: 'social'; name: keyof typeof icons.social; size?: number } & SVG<SVGSVGElement>;
-
-
-    /**
-     * A component to render an SVG icon.
-     * It looks up the icon component by its `kind` and `name` and renders it,
-     * wrapped in a `Suspense` component to handle the dynamic loading.
-     */
-    export const Icon: FC<Props> = ({ kind, name, size = 24, ...props }) => {
-        // The 'as any' is a temporary necessity because TypeScript cannot fully infer
-        // the relationship between `kind` and `name` in this generic structure.
-        const Component = icons[kind]?.[name as any];
-
-        if (!Component) {
-            return null;
+        &:focus {
+            outline: none;
+            border-color: ${theme.color.primary[100]};
+            box-shadow: 0 0 0 2px ${theme.color.secondary[200]};
         }
 
+        &::placeholder {
+            color: ${theme.color.neutral[500]};
+        }
+
+        &:disabled {
+            background: ${theme.color.neutral[200]};
+            cursor: not-allowed;
+        }
+    `;
+
+    const Wrapper = style('div')`
+        display: flex;
+        flex-direction: column;
+        gap: ${theme.space[2]};
+    `;
+
+    interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+        label?: string;
+    }
+
+    export const Input: FC<Props> = ({ label, ...rest }) => (
+        <Wrapper>
+            {label && <Text as="label">{label}</Text>}
+            <Element {...rest} />
+        </Wrapper>
+    );
+    ```
+
+#### **Nhiệm vụ 3: Xây dựng Component `Checkbox` (TODO-039)**
+
+* **Hành động:** Tạo file `src/ui/molecule/checkbox.tsx`.
+* **Mô tả:** Component checkbox có thể tùy chỉnh style.
+* **Yêu cầu:** Triển khai chính xác nội dung file như sau.
+
+    ```typescript
+    // src/ui/molecule/checkbox.tsx
+    import { style } from '@/adapter';
+    import { theme } from '@/core/theme';
+    import type { FC } from '@/adapter';
+    import { Icon } from '@/ui/atom/icon';
+
+    const Hidden = style('input').attrs({ type: 'checkbox' })`
+        border: 0;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    `;
+
+    const Styled = style('div')<{ checked: boolean }>`
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: ${({ checked }) => (checked ? theme.color.primary[100] : theme.color.neutral[100])};
+        border: 1px solid ${({ checked }) => (checked ? theme.color.primary[100] : theme.color.border.medium)};
+        border-radius: ${theme.radius.small};
+        transition: all 150ms;
+
+        ${Hidden}:focus + & {
+            box-shadow: 0 0 0 2px ${theme.color.secondary[200]};
+        }
+
+        ${Icon} {
+            visibility: ${({ checked }) => (checked ? 'visible' : 'hidden')};
+        }
+    `;
+
+    const Wrapper = style('label')`
+        display: inline-flex;
+        align-items: center;
+        gap: ${theme.space[2]};
+        cursor: pointer;
+    `;
+
+    interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
+        label?: string;
+    }
+
+    export const Checkbox: FC<Props> = ({ label, checked, ...rest }) => {
         return (
-            <Suspense fallback={<div style={{ width: size, height: size }} />}>
-                <Component width={size} height={size} {...props} />
-            </Suspense>
+            <Wrapper>
+                <Hidden checked={checked} {...rest} />
+                <Styled checked={!!checked}>
+                    <Icon kind="line" name="check" color="white" size={12} />
+                </Styled>
+                {label && <span>{label}</span>}
+            </Wrapper>
         );
     };
-    
-    // Exporting the icon map for use in the Showcase. This is a pragmatic choice for now.
-    export { icons };
     ```
 
-#### **Nhiệm vụ 3: Nâng cấp `Showcase` để hiển thị Toàn bộ Icons (TODO-035)**
+#### **Nhiệm vụ 4: Hoàn thiện các Component Form còn lại (TODO-040)**
+
+* **Hành động:** Dựa vào các component đã xây dựng (`Input`, `Checkbox`), hãy tự triển khai các component sau trong thư mục `src/ui/molecule`:
+    * `textarea.tsx`: Tương tự `Input` nhưng sử dụng thẻ `<textarea>`.
+    * `radio.tsx`: Tương tự `Checkbox` nhưng có `border-radius: 50%` và không dùng icon check.
+    * `toggle.tsx`: Tương tự `Checkbox` nhưng style như một công tắc bật/tắt.
+    * `select.tsx`: Bọc một thẻ `<select>` và dùng `Icon` `chevron-down` để tạo giao diện tùy chỉnh.
+* **Yêu cầu:** Đảm bảo tất cả các component đều tuân thủ kiến trúc, dùng token từ `theme` và có các định danh đơn từ.
+
+#### **Nhiệm vụ 5: Nâng cấp `Showcase` (TODO-041)**
 
 * **Hành động:** Chỉnh sửa file `src/main.tsx`.
-* **Mô tả:** Cập nhật `Showcase` để hiển thị tất cả các icon đã được phân loại.
-* **Yêu cầu:**
-    1.  Tìm và **xóa** section "Icons" cũ trong file `src/main.tsx`.
-    2.  Sửa các lần gọi component `<Icon />` trong section "Buttons" để sử dụng props mới, ví dụ: `<Icon kind="line" name="search" />`.
-    3.  Thêm `import { icons } from '@/ui/atom/icon';` vào đầu file `src/main.tsx`.
-    4.  Thêm các `Section` mới sau vào bên trong component `App`:
+* **Mô tả:** Thêm một section mới vào `Showcase` để hiển thị tất cả các component form đã tạo.
+* **Yêu cầu:** Tạo một `<Section title="Form Controls">` và thêm các ví dụ sử dụng cho `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, và `Toggle`, hiển thị các trạng thái khác nhau của chúng (mặc định, có giá trị, bị vô hiệu hóa).
 
-    ```tsx
-    // src/main.tsx (bên trong App component)
+#### **Nhiệm vụ 6: Dọn dẹp (TODO-042)**
 
-    <Section title="Line Icons">
-        {Object.keys(icons.line).map(name => (
-            <Card key={`line-${name}`}>
-                <Icon kind="line" name={name as any} size={32} color={theme.color.neutral[800]} />
-                <Text>{name}</Text>
-            </Card>
-        ))}
-    </Section>
+* **Hành động:** Xóa file `tsx` chứa mã form do Figma sinh ra.
 
-    <Section title="Filled Icons">
-        {Object.keys(icons.filled).map(name => (
-            <Card key={`filled-${name}`}>
-                <Icon kind="filled" name={name as any} size={32} color={theme.color.neutral[800]} />
-                <Text>{name}</Text>
-            </Card>
-        ))}
-    </Section>
-
-    <Section title="Social Icons">
-        {Object.keys(icons.social).map(name => (
-            <Card key={`social-${name}`} style={{ backgroundColor: theme.color.neutral[800] }}>
-                <Icon kind="social" name={name as any} size={32} />
-                <Text style={{ color: theme.color.neutral[100] }}>{name}</Text>
-            </Card>
-        ))}
-    </Section>
-    ```
-
-#### **Nhiệm vụ 4: Dọn dẹp (TODO-036)**
-
-* **Hành động:** Xóa file `tsx` chứa mã icon do Figma sinh ra mà bạn đã dùng để phân tích.
-* **Mục tiêu:** Giữ cho codebase sạch sẽ.
-
-### **4. QUY TRÌNH BÁO CÁO VÀ BÀN GIAO**
+### **3. QUY TRÌNH BÁO CÁO VÀ BÀN GIAO**
 
 Sau khi hoàn thành **TẤT CẢ** các nhiệm vụ trên:
 
-1.  **Cập nhật file Báo cáo:** Mở file `REPORT.md`, tạo một section mới cho nhiệm vụ này, đánh dấu các công việc đã hoàn thành và thêm ghi chú nếu cần.
-2.  **Cập nhật `todo.csv`**: Đánh dấu các `TODO-033`, `TODO-034`, `TODO-035`, `TODO-036` là `Done`.
+1.  **Cập nhật `REPORT.md`**: Tạo một section mới, ghi lại các công việc đã làm.
+2.  **Cập nhật `todo.csv`**: Đánh dấu các `TODO` từ `037` đến `042` là `Done`.
 3.  **Commit và Push code:** Sử dụng message commit sau:
 
     ```bash
     git add .
-    git commit -m "refactor(asset): categorize all icons and upgrade icon component"
+    git commit -m "feat(form): build foundational form molecule components"
     git push
     ```
 
-### **5. LỜI KẾT**
+### **4. LỜI KẾT**
 
-Việc phân loại tài sản và nâng cấp các component cốt lõi là một phần quan trọng của việc duy trì một hệ thống có khả năng mở rộng. Bằng cách hoàn thành nhiệm vụ này, bạn đang củng cố nền tảng kiến trúc của chúng ta, giúp việc thêm hàng trăm icon trong tương lai trở nên đơn giản và có tổ chức. Hãy tiếp tục duy trì tiêu chuẩn cao này.
+Các component form là nền tảng của mọi ứng dụng. Bằng cách xây dựng chúng một cách có hệ thống và tuân thủ kiến trúc, chúng ta đang đảm bảo rằng các tương tác phức tạp trong tương lai sẽ được xây dựng trên một nền móng vững chắc. Hãy tiếp tục công việc xuất sắc này.
 
 **Guardian.**
 ````

@@ -13,6 +13,12 @@ import type { FC, Node } from '@/adapter';
 import { Logo } from '@/ui/atom/logo';
 import { Button } from '@/ui/atom/button';
 import { Icon, icons } from '@/ui/atom/icon';
+import { Input } from '@/ui/molecule/input';
+import { Textarea } from '@/ui/molecule/textarea';
+import { Select } from '@/ui/molecule/select';
+import { Checkbox } from '@/ui/molecule/checkbox';
+import { Radio } from '@/ui/molecule/radio';
+import { Toggle } from '@/ui/molecule/toggle';
 
 /**
  * @name Global
@@ -173,6 +179,78 @@ const App: FC = () => (
         <Palette title="Overlay (Light)" colors={theme.color.overlay.light} />
         <Palette title="Overlay (Dark)" colors={theme.color.overlay.dark} />
         <Palette title="Gradients" colors={theme.color.gradient} />
+
+        <Section title="Form Controls">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+                {/* Input */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Subtitle>Input</Subtitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <Input placeholder="Default input" />
+                        <Input placeholder="Disabled input" disabled />
+                        <Input placeholder="With prefix" prefix={<Icon kind="line" name="search" />} />
+                        <Input placeholder="With suffix" suffix={<Icon kind="line" name="check" />} />
+                    </div>
+                </div>
+
+                {/* Textarea */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Subtitle>Textarea</Subtitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <Textarea placeholder="Default textarea" />
+                        <Textarea placeholder="Disabled textarea" disabled />
+                    </div>
+                </div>
+
+                {/* Select */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Subtitle>Select</Subtitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <Select>
+                            <option value="">Choose an option</option>
+                            <option value="1">Option 1</option>
+                            <option value="2">Option 2</option>
+                            <option value="3">Option 3</option>
+                        </Select>
+                        <Select disabled>
+                            <option value="">Disabled select</option>
+                        </Select>
+                    </div>
+                </div>
+
+                {/* Checkbox */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Subtitle>Checkbox</Subtitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <Checkbox label="Default checkbox" />
+                        <Checkbox label="Checked checkbox" defaultChecked />
+                        <Checkbox label="Disabled checkbox" disabled />
+                        <Checkbox label="Disabled checked" defaultChecked disabled />
+                    </div>
+                </div>
+
+                {/* Radio */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Subtitle>Radio</Subtitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <Radio name="radio1" label="Option 1" />
+                        <Radio name="radio1" label="Option 2" defaultChecked />
+                        <Radio name="radio1" label="Disabled option" disabled />
+                    </div>
+                </div>
+
+                {/* Toggle */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <Subtitle>Toggle</Subtitle>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                        <Toggle label="Default toggle" />
+                        <Toggle label="Checked toggle" defaultChecked />
+                        <Toggle label="Disabled toggle" disabled />
+                        <Toggle label="Disabled checked" defaultChecked disabled />
+                    </div>
+                </div>
+            </div>
+        </Section>
 
         <Section title="Primary Shadows">
             <Card variant="primary" shadow="xs"><Text>XS</Text></Card>

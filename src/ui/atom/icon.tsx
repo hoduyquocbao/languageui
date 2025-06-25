@@ -19,6 +19,8 @@ const icons = {
         transfer: lazy(() => import('@/assets/icons/line/transfer.svg?react')),
         arrow: lazy(() => import('@/assets/icons/line/arrow.svg?react')),
         search: lazy(() => import('@/assets/icons/line/search.svg?react')),
+        'chevron-down': lazy(() => import('@/assets/icons/line/chevron-down.svg?react')),
+        check: lazy(() => import('@/assets/icons/line/check.svg?react')),
     },
     filled: {
         file: lazy(() => import('@/assets/icons/filled/file.svg?react')),
