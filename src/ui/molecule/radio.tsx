@@ -1,6 +1,7 @@
 import { style } from '@/adapter';
 import { theme } from '@/core/theme';
 import type { FC } from '@/adapter';
+import { useState, useEffect } from 'react';
 
 const Hidden = style('input').attrs({ type: 'radio' })`
     border: 0;
@@ -65,10 +66,27 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Radio: FC<Props> = ({ label, checked, disabled, ...rest }) => {
+    const [isChecked, setIsChecked] = useState(false);
+    
+    useEffect(() => {
+        if (checked !== undefined) {
+            setIsChecked(checked);
+        }
+    }, [checked]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (checked === undefined) {
+            setIsChecked(e.target.checked);
+        }
+        rest.onChange?.(e);
+    };
+
+    const currentChecked = checked !== undefined ? checked : isChecked;
+
     return (
         <Wrapper disabled={disabled}>
-            <Hidden checked={checked} disabled={disabled} {...rest} />
-            <Styled checked={!!checked} disabled={disabled} />
+            <Hidden checked={currentChecked} disabled={disabled} onChange={handleChange} {...rest} />
+            <Styled checked={currentChecked} disabled={disabled} />
             {label && <span>{label}</span>}
         </Wrapper>
     );

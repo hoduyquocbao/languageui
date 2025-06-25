@@ -2,6 +2,7 @@ import { style } from '@/adapter';
 import { theme } from '@/core/theme';
 import type { FC } from '@/adapter';
 import { Icon } from '@/ui/atom/icon';
+import { useState, useEffect } from 'react';
 
 const Hidden = style('input').attrs({ type: 'checkbox' })`
     border: 0;
@@ -49,18 +50,37 @@ interface Props {
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const Checkbox: FC<Props> = ({ label, checked, defaultChecked, disabled, onChange, ...rest }) => (
-    <Wrapper disabled={disabled}>
-        <Hidden 
-            checked={checked} 
-            defaultChecked={defaultChecked}
-            disabled={disabled}
-            onChange={onChange}
-            {...rest} 
-        />
-        <Box checked={!!checked} disabled={disabled}>
-            {checked && <Icon kind="line" name="check" size={12} color="white" />}
-        </Box>
-        {label && <span>{label}</span>}
-    </Wrapper>
-); 
+export const Checkbox: FC<Props> = ({ label, checked, defaultChecked, disabled, onChange, ...rest }) => {
+    const [isChecked, setIsChecked] = useState(defaultChecked || false);
+    
+    useEffect(() => {
+        if (checked !== undefined) {
+            setIsChecked(checked);
+        }
+    }, [checked]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (checked === undefined) {
+            setIsChecked(e.target.checked);
+        }
+        onChange?.(e);
+    };
+
+    const currentChecked = checked !== undefined ? checked : isChecked;
+
+    return (
+        <Wrapper disabled={disabled}>
+            <Hidden 
+                checked={currentChecked} 
+                defaultChecked={defaultChecked}
+                disabled={disabled}
+                onChange={handleChange}
+                {...rest} 
+            />
+            <Box checked={currentChecked} disabled={disabled}>
+                {currentChecked && !disabled && <Icon kind="line" name="check" size={12} color="white" />}
+            </Box>
+            {label && <span>{label}</span>}
+        </Wrapper>
+    );
+}; 
